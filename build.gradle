@@ -1,0 +1,35 @@
+apply plugin: 'groovy'
+
+apply plugin: 'maven'
+group = 'com.tangpj.calces'
+
+version = '1.0.6-SNAPSHOT'
+
+archivesBaseName = 'calces-gradle-plugin'
+
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile gradleApi()
+    compile localGroovy()
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('/Users/tang/.m2/repository'))
+        }
+
+}
+
+
+
+
+

@@ -1,0 +1,12 @@
+.gradle
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+/.idea
+/gradle
+/out
+gradlew.bat
+gradle
+
+
