@@ -9,8 +9,10 @@ import org.gradle.api.Project
  */
 class AppExtension {
     String name
+    String app
     String applicationId
-    String modules
+    String dependMethod = "implementation"
+    List<String> modules
 
     AppExtension(String name){
         this.name = name
@@ -20,7 +22,7 @@ class AppExtension {
         this.applicationId = applicationId
     }
 
-    def modules(String modules){
+    def modules(String...  modules){
         this.modules = modules
     }
 
