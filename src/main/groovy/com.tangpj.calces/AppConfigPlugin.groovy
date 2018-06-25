@@ -1,9 +1,9 @@
 package com.tangpj.calces
 
-import com.tangpj.calces.extensions.AppExtension
-import org.gradle.api.NamedDomainObjectCollection
+import com.tangpj.calces.extensions.AppConfigExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+
 
 /**
  * Created by tang on 2018/6/12.
@@ -12,26 +12,25 @@ class AppConfigPlugin implements Plugin<Project> {
 
     private static final String EXTENSION_NAME = "appConfig"
 
-    private NamedDomainObjectCollection<AppExtension> appExtensionList
-
     @Override
     void apply(Project project) {
-        NamedDomainObjectCollection<AppExtension> appExtensionList = project.container(AppExtension)
-        project.extensions.add(EXTENSION_NAME, appExtensionList)
-        configApp(project, appExtensionList)
+        AppConfigExtension appConfigExtension = new AppConfigExtension(project)
+        project.extensions.add(EXTENSION_NAME, appConfigExtension)
+        configApp(project, appConfigExtension)
     }
 
-    static void configApp(Project project, NamedDomainObjectCollection<AppExtension> appExtensionList) {
+    static void configApp(Project project, AppConfigExtension appConfigExtension) {
         List<String> moduleList = new ArrayList<>()
         project.afterEvaluate {
-            appExtensionList = project.extensions.getByName(EXTENSION_NAME) as NamedDomainObjectCollection<AppExtension>
-            println appExtensionList
-            checkoutModules(appExtensionList,moduleList)
+            appConfigExtension = project.extensions.getByName(EXTENSION_NAME) as AppConfigExtension
+            println appConfigExtension
+
+            checkoutModules(appConfigExtension,moduleList)
 
         }
 
         initChildModules(moduleList, project)
-        println moduleList
+        println "child modules = $moduleList"
     }
 
     static void initChildModules(List<String> moduleList ,Project project){
@@ -48,7 +47,7 @@ class AppConfigPlugin implements Plugin<Project> {
 
     }
 
-    static void checkoutModules(NamedDomainObjectCollection<AppExtension> appExtensionList,
+    static void checkoutModules(AppConfigExtension appConfigExtension,
                                 List<String> moduleList){
         Set<String> configSet = new HashSet<>()
         Set<String> modulesSet = new HashSet<>()
@@ -56,23 +55,20 @@ class AppConfigPlugin implements Plugin<Project> {
             modulesSet.addAll(moduleList)
         }
         List<String> notFoundList = new ArrayList<>()
-        appExtensionList.forEach{
-            if (it.app != null && !it.app.isEmpty()){
-                configSet.add(it.app)
-            }else{
-                configSet.add(":" + it.name)
 
-            }
-            if (it.modules != null){
-                configSet.addAll(it.modules)
-                it.modules.forEach{
-                    if (!it.startsWith(":")){
-                        throw new IllegalArgumentException(
-                                "module name format error ,$it need to start whit ':' ")
-                    }
-                }
-            }
+        if (appConfigExtension.app != null && !appConfigExtension.app.isEmpty()){
+            configSet.add(appConfigExtension.app)
+        }else{
+            configSet.add(":$appConfigExtension.name")
+        }
+        List<String> moduleExtensionList = appConfigExtension.modules.
+                toList().
+                stream().
+                map{ it.name }.
+                collect()
 
+        if (moduleExtensionList != null && !moduleExtensionList.isEmpty()){
+            configSet.addAll(moduleExtensionList)
         }
         configSet.forEach{
             if(!modulesSet.contains(it)){
