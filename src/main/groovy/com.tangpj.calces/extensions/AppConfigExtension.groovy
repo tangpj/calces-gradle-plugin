@@ -7,19 +7,22 @@ import org.gradle.api.Project
  * Created by tang on 2018/6/14.
  */
 class AppConfigExtension {
-    String app
+    String name
     String applicationId
     String dependMethod = "implementation"
     boolean debug = false
     NamedDomainObjectContainer<ModuleExtension> modules
 
+    AppConfigExtension(String name){
+        this.name = name
+    }
 
     AppConfigExtension(Project project){
         modules = project.container(ModuleExtension)
     }
 
-    def app(String app){
-        this.app = app
+    def name(String name){
+        this.name = name
     }
 
     def applicationId(String applicationId){
@@ -40,7 +43,7 @@ class AppConfigExtension {
 
     @Override
     String toString() {
-        return "app = $app, applicationId = $applicationId, dependMethod = $dependMethod  debug = $debug\n" +
+        return "app = $name, applicationId = $applicationId, dependMethod = $dependMethod  debug = $debug\n" +
                 "modules: ${modules.isEmpty()? "is empty" : "$modules"}"
     }
 }

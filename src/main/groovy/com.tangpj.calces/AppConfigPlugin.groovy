@@ -1,9 +1,10 @@
 package com.tangpj.calces
 
 import com.tangpj.calces.extensions.AppConfigExtension
+import com.tangpj.calces.extensions.ModuleExtension
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-
 
 /**
  * Created by tang on 2018/6/12.
@@ -14,26 +15,29 @@ class AppConfigPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        AppConfigExtension appConfigExtension = new AppConfigExtension(project)
-        project.extensions.add(EXTENSION_NAME, appConfigExtension)
-        configApp(project, appConfigExtension)
+        NamedDomainObjectContainer<AppConfigExtension> appConfigExtensions = project.container(AppConfigExtension)
+        appConfigExtensions.all {
+            modules = project.container(ModuleExtension)
+        }
+        project.extensions.add(EXTENSION_NAME, appConfigExtensions)
+        configApp(project)
     }
 
-    static void configApp(Project project, AppConfigExtension appConfigExtension) {
+    void configApp(Project project) {
         List<String> moduleList = new ArrayList<>()
+        NamedDomainObjectContainer<AppConfigExtension> appConfigExtensions
         project.afterEvaluate {
-            appConfigExtension = project.extensions.getByName(EXTENSION_NAME) as AppConfigExtension
-            println appConfigExtension
-
-            checkoutModules(appConfigExtension,moduleList)
+            appConfigExtensions = project.extensions.getByName(EXTENSION_NAME) as
+                    NamedDomainObjectContainer<AppConfigExtension>
+            checkRepeatApp(appConfigExtensions)
+            checkModules(appConfigExtensions,moduleList)
 
         }
-
         initChildModules(moduleList, project)
-        println "child modules = $moduleList"
+        println("project child modules: $moduleList")
     }
 
-    static void initChildModules(List<String> moduleList ,Project project){
+    void initChildModules(List<String> moduleList ,Project project){
 
         if (project.childProjects.isEmpty()){
             moduleList.add(project.toString()
@@ -47,8 +51,20 @@ class AppConfigPlugin implements Plugin<Project> {
 
     }
 
-    static void checkoutModules(AppConfigExtension appConfigExtension,
-                                List<String> moduleList){
+    static void checkRepeatApp(NamedDomainObjectContainer<AppConfigExtension> appConfigExtensions){
+        Map<String,List<AppConfigExtension>> groupMap =
+                appConfigExtensions.groupBy{ it.name.startsWith(':') ? it.name : new String(":" + it.name)}
+        groupMap.forEach{
+            k,v ->
+                if (v.size() > 1){
+                    throw new IllegalArgumentException("app is repeat. app name =  [$k]")
+                }
+        }
+
+    }
+
+    static void checkModules(NamedDomainObjectContainer<AppConfigExtension> appConfigExtensions,
+                             List<String> moduleList){
         Set<String> configSet = new HashSet<>()
         Set<String> modulesSet = new HashSet<>()
         if (moduleList != null){
@@ -56,20 +72,29 @@ class AppConfigPlugin implements Plugin<Project> {
         }
         List<String> notFoundList = new ArrayList<>()
 
-        if (appConfigExtension.app != null && !appConfigExtension.app.isEmpty()){
-            configSet.add(appConfigExtension.app)
-        }else{
-            configSet.add(":$appConfigExtension.name")
-        }
-        List<String> moduleExtensionList = appConfigExtension.modules.
-                toList().
-                stream().
-                map{ it.name }.
-                collect()
+        List<String> appList = appConfigExtensions
+                .stream()
+                .map{it.name.startsWith(':') ? it.name : new String(":" + it.name)}.collect()
+        appConfigExtensions.forEach{
+            String appName = it.name.startsWith(':') ? it.name : new String(":" + it.name)
+            configSet.add(appName)
+            List<String> moduleExtensionList =
+                    it.modules.
+                            stream().
+                            map{
+                                if (appList.contains(it.name)){
+                                    throw new IllegalArgumentException("$it.name already configured " +
+                                            "as an application, please check appConfig")
+                                }
+                                it.name
+                            }.
+                            collect()
 
-        if (moduleExtensionList != null && !moduleExtensionList.isEmpty()){
-            configSet.addAll(moduleExtensionList)
+            if (moduleExtensionList != null && !moduleExtensionList.isEmpty()){
+                configSet.addAll(moduleExtensionList)
+            }
         }
+
         configSet.forEach{
             if(!modulesSet.contains(it)){
                 notFoundList.add(it)
@@ -80,7 +105,7 @@ class AppConfigPlugin implements Plugin<Project> {
                     "not fount modules = " + notFoundList
             )
         }
-        println "build list = " + configSet
+        println("build modules: " + configSet)
     }
 
 
