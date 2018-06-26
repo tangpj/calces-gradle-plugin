@@ -105,7 +105,7 @@ class AppConfigPlugin implements Plugin<Project> {
                     "not fount modules = " + notFoundList
             )
         }
-        println("build modules: " + configSet)
+        println("modules: " + configSet)
     }
 
 
