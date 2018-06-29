@@ -21,44 +21,34 @@ import org.gradle.api.Project
 /**
  * Created by tang on 2018/6/14.
  */
-class AppConfigExtension {
-    String name
-    String applicationId
-    String dependMethod = "implementation"
-    boolean debug = false
-    NamedDomainObjectContainer<ModuleExtension> modules
+class AppConfigExt {
 
-    AppConfigExtension(String name){
-        this.name = name
+    boolean debugEnable = false
+    NamedDomainObjectContainer<AppExt> apps
+    NamedDomainObjectContainer<ModuleExt> modules
+
+    AppConfigExt(Project project){
+        apps = project.container(AppExt)
+        modules = project.container(ModuleExt)
     }
 
-    AppConfigExtension(Project project){
-        modules = project.container(ModuleExtension)
+    def debugEnable(boolean debugEnable){
+        this.debugEnable = debugEnable
     }
 
-    def name(String name){
-        this.name = name
+    def apps(Closure closure){
+        apps.configure(closure)
     }
 
-    def applicationId(String applicationId){
-        this.applicationId = applicationId
-    }
-
-    def dependMethod(String dependMethod){
-        this.dependMethod = dependMethod
-    }
-
-    def debug(boolean debug){
-        this.debug = debug
-    }
 
     def modules(Closure closure){
-        this.modules.configure(closure)
+        modules.configure(closure)
     }
 
     @Override
     String toString() {
-        return "app = $name, applicationId = $applicationId, dependMethod = $dependMethod  debug = $debug\n" +
+        return "isDebug: $debugEnable\n" +
+                "apps: ${apps.isEmpty()? "is empty" : "$apps"}"+
                 "modules: ${modules.isEmpty()? "is empty" : "$modules"}"
     }
 }

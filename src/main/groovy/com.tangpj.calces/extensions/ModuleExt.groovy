@@ -3,14 +3,14 @@ package com.tangpj.calces.extensions
 /**
  * Created by tang on 2018/6/24.
  */
-class ModuleExtension {
+class ModuleExt {
     String name
     boolean isRunAlone = false
     String runAloneId
     String runAloneSuper
-    String runAloneUri
+    String runAloneActivity
 
-    ModuleExtension(String name){
+    ModuleExt(String name){
         this.name = name
     }
 
@@ -32,13 +32,13 @@ class ModuleExtension {
         this.runAloneSuper = runAloneSuper
     }
 
-    def runAloneUri(String runAloneUri){
-        this.runAloneUri = runAloneUri
+    def runAloneActivity(String runAloneActivity){
+        this.runAloneActivity = runAloneActivity
     }
 
     @Override
     String toString() {
         return "name = $name, isRunAlone = $isRunAlone, runAloneId = $runAloneId, " +
-                "runAloneSuper = $runAloneSuper, runAloneUri = $runAloneUri"
+                "runAloneSuper = $runAloneSuper, runAloneActivity = $runAloneActivity"
     }
 }

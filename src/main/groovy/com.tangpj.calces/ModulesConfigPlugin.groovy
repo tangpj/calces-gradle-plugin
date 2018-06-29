@@ -2,9 +2,11 @@ package com.tangpj.calces
 
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
-import com.tangpj.calces.extensions.AppConfigExtension
-import com.tangpj.calces.extensions.ModuleExtension
-import kotlin.Unit
+import com.tangpj.calces.extensions.AppConfigExt
+import com.tangpj.calces.extensions.AppExt
+import com.tangpj.calces.extensions.ModuleExt
+import groovy.xml.StreamingMarkupBuilder
+import groovy.xml.XmlUtil
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -17,55 +19,50 @@ class ModulesConfigPlugin implements Plugin<Project> {
 
     private static final String PARENT_EXTENSION_NAME = "appConfig"
 
-    boolean isDebug = false
-
     @Override
     void apply(Project project) {
-        NamedDomainObjectContainer<AppConfigExtension> appConfigExtensions = getAppConfigExtension(project)
-        configModules(project,appConfigExtensions)
+        AppConfigExt appConfigExt = getAppConfigExtension(project)
+        configModules(project, appConfigExt)
     }
 
-    void configModules(Project project,  NamedDomainObjectContainer<AppConfigExtension>  appConfigExtensions){
-        if (appConfigExtensions == null){
-            throw new NullPointerException("app is empty")
+    static void configModules(Project project, AppConfigExt appConfigExt){
+        if (appConfigExt == null){
+            throw new NullPointerException("can not find appConfig")
         }
-        String appName = ""
-        List<AppConfigExtension> filterList = appConfigExtensions.stream().filter(){
-            appName = it.name.startsWith(':') ? it.name : new String(":" + it.name)
-            isDebug = isDebug || it.debug
-            appName.endsWith(project.name)
-        }.collect()
+        List<AppExt> filterList = appConfigExt.apps.stream()
+                .filter{ (it.name.startsWith(':') ? it.name : new String(":" + it.name)).endsWith(project.name) }
+                .skip(1).collect()
 
         if (filterList != null && filterList.size() > 0){
-            AppConfigExtension appConfigExtension = filterList.get(0)
+            AppExt appExt = filterList.get(0)
             AppPlugin appPlugin = project.plugins.apply(AppPlugin)
-            appPlugin.extension.defaultConfig.setApplicationId(appConfigExtension.applicationId)
-            dependModules(project, appConfigExtension, appName)
-        }else if (!(isDebug && modulesRunAlone(project,appConfigExtensions))){
+            appPlugin.extension.defaultConfig.setApplicationId(appExt.applicationId)
+            dependModules(project, appExt, appConfigExt.isDebugEnable())
+        }else if (!(appConfigExt.isDebugEnable() && modulesRunAlone(project,appConfigExt.modules))){
             project.plugins.apply(LibraryPlugin)
         }
 
     }
 
-    void dependModules(Project project, AppConfigExtension appExtension, String appName){
+    static void dependModules(Project project, AppExt appExt, boolean isDebug){
         if (isDebug){
-            println("build debug app: [$appName]")
+            println("build debug app: [$appExt.name]")
             return
         }
 
-        if (appExtension.modules != null && appExtension.modules.size() > 0){
-            List<String> modulesList = appExtension.modules.stream().map{
-                project.dependencies.add(appExtension.dependMethod, project.project(it.name))
-                it.name
+        if (appExt.modules != null && appExt.modules.size() > 0){
+            List<String> modulesList = appExt.modules.stream().map{
+                project.dependencies.add(appExt.dependMethod, project.project(it))
+                it
             }.collect()
-            println("build app: [$appName] , depend modules: $modulesList")
+            println("build app: [$appExt.name] , depend modules: $modulesList")
         }
     }
 
-    NamedDomainObjectContainer<AppConfigExtension> getAppConfigExtension(Project project){
+    AppConfigExt getAppConfigExtension(Project project){
         try{
             return project.parent.extensions.getByName(PARENT_EXTENSION_NAME) as
-                    NamedDomainObjectContainer<AppConfigExtension>
+                    AppConfigExt
         }catch (UnknownDomainObjectException ignored){
             if (project.parent != null){
                 getAppConfigExtension(project.parent)
@@ -75,21 +72,50 @@ class ModulesConfigPlugin implements Plugin<Project> {
         }
     }
 
-    private static boolean modulesRunAlone(Project project, NamedDomainObjectContainer<AppConfigExtension> appConfigExtensions){
-        Long count = appConfigExtensions
-                .stream()
-                .flatMap{it.modules.stream()}
-                .filter{
-                    boolean filter = it.name.endsWith(project.name)
-                    filter
-                }
-                .filter{ it.isRunAlone }.map{
-                    AppPlugin appPlugin = project.plugins.apply(AppPlugin)
-                    appPlugin.extension.defaultConfig.setApplicationId(it.runAloneId)
-                    println("build run alone modules: [$it.name]")
-                    it.name
-                }.count()
-        return count > 0L
+    private static boolean modulesRunAlone(Project project, NamedDomainObjectContainer<ModuleExt> modules){
+        List<ModuleExt> filterList = modules.stream().filter{ it.name.endsWith(project.name) }.skip(0).collect()
+        if (filterList != null && filterList.size() > 0){
+            ModuleExt moduleExt = filterList.get(0)
+            if (moduleExt.isRunAlone){
+                AppPlugin appPlugin = project.plugins.apply(AppPlugin)
+                appPlugin.extension.defaultConfig.setApplicationId(moduleExt.runAloneId)
+                println("build run alone modules: [$moduleExt.name]")
+                initModule(moduleExt, project)
+            }
+            return moduleExt.isRunAlone
+        }
+        return false
+
+
+    }
+
+    private static void initModule(ModuleExt moduleExtension, Project project){
+        def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
+        File manifestFile = new File(path)
+        if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
+            println "Unable to find AndroidManifest and create fail, please manually create"
+        }
+
+        def manifest = new XmlSlurper().parse(manifestFile)
+        def runAloneActivity = moduleExtension.runAloneActivity
+        manifest.attributes().replace("package", moduleExtension.runAloneId)
+
+        buildModulesManifest(manifest, path)
+    }
+
+    static void buildModulesManifest(def manifest, String path){
+
+        def fileText = new File(path)
+
+        StreamingMarkupBuilder outputBuilder = new StreamingMarkupBuilder()
+        def root = outputBuilder.bind{
+            mkp.xmlDeclaration()
+            mkp.declareNamespace('android':'http://schemas.android.com/apk/res/android')
+            mkp.yield manifest
+        }
+        println "root = $root"
+        String result = XmlUtil.serialize(root)
+        fileText.text = result
 
     }
 }
