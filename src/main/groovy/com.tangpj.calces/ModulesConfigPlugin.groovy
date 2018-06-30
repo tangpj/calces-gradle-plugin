@@ -5,6 +5,11 @@ import com.android.build.gradle.LibraryPlugin
 import com.tangpj.calces.extensions.AppConfigExt
 import com.tangpj.calces.extensions.AppExt
 import com.tangpj.calces.extensions.ModuleExt
+import com.tangpj.calces.utils.AppManifestStrategy
+import com.tangpj.calces.utils.LibraryManifestStrategy
+import com.tangpj.calces.utils.ManifestStrategy
+import groovy.util.slurpersupport.GPathResult
+import groovy.util.slurpersupport.NodeChild
 import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
 import org.gradle.api.NamedDomainObjectContainer
@@ -31,29 +36,36 @@ class ModulesConfigPlugin implements Plugin<Project> {
         }
         List<AppExt> filterList = appConfigExt.apps.stream()
                 .filter{ (it.name.startsWith(':') ? it.name : new String(":" + it.name)).endsWith(project.name) }
-                .skip(1).collect()
+                .skip(0).collect()
 
         if (filterList != null && filterList.size() > 0){
             AppExt appExt = filterList.get(0)
             AppPlugin appPlugin = project.plugins.apply(AppPlugin)
             appPlugin.extension.defaultConfig.setApplicationId(appExt.applicationId)
-            dependModules(project, appExt, appConfigExt.isDebugEnable())
+            dependModules(project, appExt, appConfigExt)
         }else if (!(appConfigExt.isDebugEnable() && modulesRunAlone(project,appConfigExt.modules))){
             project.plugins.apply(LibraryPlugin)
         }
 
     }
 
-    static void dependModules(Project project, AppExt appExt, boolean isDebug){
-        if (isDebug){
+    static void dependModules(Project project, AppExt appExt, AppConfigExt appConfigExt){
+        if (appConfigExt.isDebugEnable()){
             println("build debug app: [$appExt.name]")
             return
         }
 
+        List<ModuleExt> moduleExtList = appConfigExt.modules.stream().filter{
+            modules ->
+                appExt.modules.stream().find{ it.contains(modules.name) }
+        }.skip(0).collect()
+
         if (appExt.modules != null && appExt.modules.size() > 0){
-            List<String> modulesList = appExt.modules.stream().map{
-                project.dependencies.add(appExt.dependMethod, project.project(it))
-                it
+            List<String> modulesList = appExt.modules.stream()
+                    .filter{ moduleExtList != null && !moduleExtList.get(0).isRunAlone  }
+                    .map{
+                         project.dependencies.add(appExt.dependMethod, project.project(it))
+                         it
             }.collect()
             println("build app: [$appExt.name] , depend modules: $modulesList")
         }
@@ -81,41 +93,35 @@ class ModulesConfigPlugin implements Plugin<Project> {
                 appPlugin.extension.defaultConfig.setApplicationId(moduleExt.runAloneId)
                 println("build run alone modules: [$moduleExt.name]")
                 initModule(moduleExt, project)
+            }else{
+                def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
+                File manifestFile = new File(path)
+                GPathResult manifest = new XmlSlurper().parse(manifestFile)
+                new LibraryManifestStrategy(path).resetManifest(moduleExt, manifest)
             }
             return moduleExt.isRunAlone
         }
+        new NodeChild()
         return false
 
 
     }
 
-    private static void initModule(ModuleExt moduleExtension, Project project){
+    private static void initModule(ModuleExt moduleExt, Project project){
         def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
         File manifestFile = new File(path)
         if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
             println "Unable to find AndroidManifest and create fail, please manually create"
         }
 
-        def manifest = new XmlSlurper().parse(manifestFile)
-        def runAloneActivity = moduleExtension.runAloneActivity
-        manifest.attributes().replace("package", moduleExtension.runAloneId)
-
-        buildModulesManifest(manifest, path)
-    }
-
-    static void buildModulesManifest(def manifest, String path){
-
-        def fileText = new File(path)
-
-        StreamingMarkupBuilder outputBuilder = new StreamingMarkupBuilder()
-        def root = outputBuilder.bind{
-            mkp.xmlDeclaration()
-            mkp.declareNamespace('android':'http://schemas.android.com/apk/res/android')
-            mkp.yield manifest
+        GPathResult manifest = new XmlSlurper().parse(manifestFile)
+        if (!moduleExt.runAloneActivity.isEmpty()){
+            new AppManifestStrategy(path).resetManifest(moduleExt, manifest)
         }
-        println "root = $root"
-        String result = XmlUtil.serialize(root)
-        fileText.text = result
+
 
     }
+
+
 }
+
