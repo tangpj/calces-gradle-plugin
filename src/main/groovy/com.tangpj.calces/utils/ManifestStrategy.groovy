@@ -67,6 +67,7 @@ class AppManifestStrategy extends ManifestStrategy{
     @Override
     void setMainIntentFilter(def activity, boolean isFindMain) {
         if (!isFindMain){
+            println "build app"
             activity.appendNode{
                 'intent-filter'{
                     action('android:name':"android.intent.action.MAIN")
@@ -87,6 +88,7 @@ class LibraryManifestStrategy extends ManifestStrategy{
     @Override
     void setMainIntentFilter(def activity, boolean isFindMain) {
         if (isFindMain){
+            println "build lib"
             activity.'intent-filter'.each{
                 if(it.action.@'android:name' == "android.intent.action.MAIN"){
                     it.replaceNode{}

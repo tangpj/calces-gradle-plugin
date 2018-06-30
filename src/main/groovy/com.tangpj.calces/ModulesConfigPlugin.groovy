@@ -57,12 +57,13 @@ class ModulesConfigPlugin implements Plugin<Project> {
 
         List<ModuleExt> moduleExtList = appConfigExt.modules.stream().filter{
             modules ->
-                appExt.modules.stream().find{ it.contains(modules.name) }
+                String modulesName = appExt.modules.stream().find{ it.contains(modules.name) }
+                modulesName != null && !modulesName.isEmpty()
         }.skip(0).collect()
 
         if (appExt.modules != null && appExt.modules.size() > 0){
             List<String> modulesList = appExt.modules.stream()
-                    .filter{ moduleExtList != null && !moduleExtList.get(0).isRunAlone  }
+                    .filter{appConfigExt.debugEnable ? (moduleExtList != null && !moduleExtList.get(0).isRunAlone) : true }
                     .map{
                          project.dependencies.add(appExt.dependMethod, project.project(it))
                          it
@@ -73,8 +74,7 @@ class ModulesConfigPlugin implements Plugin<Project> {
 
     AppConfigExt getAppConfigExtension(Project project){
         try{
-            return project.parent.extensions.getByName(PARENT_EXTENSION_NAME) as
-                    AppConfigExt
+            return project.parent.extensions.getByName(PARENT_EXTENSION_NAME) as AppConfigExt
         }catch (UnknownDomainObjectException ignored){
             if (project.parent != null){
                 getAppConfigExtension(project.parent)
@@ -88,40 +88,30 @@ class ModulesConfigPlugin implements Plugin<Project> {
         List<ModuleExt> filterList = modules.stream().filter{ it.name.endsWith(project.name) }.skip(0).collect()
         if (filterList != null && filterList.size() > 0){
             ModuleExt moduleExt = filterList.get(0)
+            def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
+            File manifestFile = new File(path)
+            if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
+                println "Unable to find AndroidManifest and create fail, please manually create"
+            }
+
+            GPathResult manifest = new XmlSlurper().parse(manifestFile)
             if (moduleExt.isRunAlone){
                 AppPlugin appPlugin = project.plugins.apply(AppPlugin)
                 appPlugin.extension.defaultConfig.setApplicationId(moduleExt.runAloneId)
+
                 println("build run alone modules: [$moduleExt.name]")
-                initModule(moduleExt, project)
+                if (!moduleExt.runAloneActivity.isEmpty()){
+                    new AppManifestStrategy(path).resetManifest(moduleExt, manifest)
+                }
             }else{
-                def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
-                File manifestFile = new File(path)
-                GPathResult manifest = new XmlSlurper().parse(manifestFile)
                 new LibraryManifestStrategy(path).resetManifest(moduleExt, manifest)
             }
             return moduleExt.isRunAlone
         }
-        new NodeChild()
         return false
 
 
     }
-
-    private static void initModule(ModuleExt moduleExt, Project project){
-        def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
-        File manifestFile = new File(path)
-        if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
-            println "Unable to find AndroidManifest and create fail, please manually create"
-        }
-
-        GPathResult manifest = new XmlSlurper().parse(manifestFile)
-        if (!moduleExt.runAloneActivity.isEmpty()){
-            new AppManifestStrategy(path).resetManifest(moduleExt, manifest)
-        }
-
-
-    }
-
 
 }
 
