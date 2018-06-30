@@ -50,11 +50,6 @@ class ModulesConfigPlugin implements Plugin<Project> {
     }
 
     static void dependModules(Project project, AppExt appExt, AppConfigExt appConfigExt){
-        if (appConfigExt.isDebugEnable()){
-            println("build debug app: [$appExt.name]")
-            return
-        }
-
         List<ModuleExt> moduleExtList = appConfigExt.modules.stream().filter{
             modules ->
                 String modulesName = appExt.modules.stream().find{ it.contains(modules.name) }
