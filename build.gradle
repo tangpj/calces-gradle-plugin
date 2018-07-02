@@ -2,10 +2,22 @@ apply plugin: 'groovy'
 
 apply plugin: 'maven'
 group = 'com.tangpj.tools'
-version = '1.0.11-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 archivesBaseName = 'calces-gradle-plugin'
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
+    }
+}
+
+apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.12'
@@ -18,6 +30,26 @@ repositories {
     mavenCentral()
     mavenLocal()
     google()
+    jcenter()
+}
+
+pluginBundle {
+    website = 'https://github.com/DobbyTang/calces-gradle-plugin'
+    vcsUrl = 'git@github.com:DobbyTang/calces-gradle-plugin.git'
+    description = 'Android componentized automatic build script' // 你发布插件的描述
+    tags = ['Android', 'Gradle', 'Componentization'] // 你发布插件的标签
+
+    plugins {
+        appconfigPlugin {
+            id = 'calces.appconfig.plugin' // 就是刚才定义属性文件时使用的ID
+            displayName = 'AppConfigPlugin' // 添加依赖时使用的名字
+        }
+
+        modulesPlugin {
+            id = 'calces.modules.plugin' // 就是刚才定义属性文件时使用的ID
+            displayName = 'ModulesConfigPlugin' // 添加依赖时使用的名字
+        }
+    }
 }
 
 

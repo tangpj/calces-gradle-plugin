@@ -6,5 +6,5 @@
 /.idea
 /out
 gradlew.bat
-
+/.gradle/local.properties
 
