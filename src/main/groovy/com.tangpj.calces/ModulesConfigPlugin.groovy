@@ -4,14 +4,10 @@ import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
 import com.tangpj.calces.extensions.AppConfigExt
 import com.tangpj.calces.extensions.AppExt
-import com.tangpj.calces.extensions.ModuleExt
+import com.tangpj.calces.extensions.LibraryExt
 import com.tangpj.calces.utils.AppManifestStrategy
 import com.tangpj.calces.utils.LibraryManifestStrategy
-import com.tangpj.calces.utils.ManifestStrategy
 import groovy.util.slurpersupport.GPathResult
-import groovy.util.slurpersupport.NodeChild
-import groovy.xml.StreamingMarkupBuilder
-import groovy.xml.XmlUtil
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -42,15 +38,16 @@ class ModulesConfigPlugin implements Plugin<Project> {
             AppExt appExt = filterList.get(0)
             AppPlugin appPlugin = project.plugins.apply(AppPlugin)
             appPlugin.extension.defaultConfig.setApplicationId(appExt.applicationId)
+            new AppManifestStrategy(project).resetManifest(appExt)
             dependModules(project, appExt, appConfigExt)
-        }else if (!(appConfigExt.isDebugEnable() && modulesRunAlone(project,appConfigExt.modules))){
-            project.plugins.apply(LibraryPlugin)
+        }else {
+            modulesRunAlone(project,appConfigExt.modules, appConfigExt.debugEnable)
         }
 
     }
 
     static void dependModules(Project project, AppExt appExt, AppConfigExt appConfigExt){
-        List<ModuleExt> moduleExtList = appConfigExt.modules.stream().filter{
+        List<LibraryExt> moduleExtList = appConfigExt.modules.stream().filter{
             modules ->
                 String modulesName = appExt.modules.stream().find{ it.contains(modules.name) }
                 modulesName != null && !modulesName.isEmpty()
@@ -79,32 +76,28 @@ class ModulesConfigPlugin implements Plugin<Project> {
         }
     }
 
-    private static boolean modulesRunAlone(Project project, NamedDomainObjectContainer<ModuleExt> modules){
-        List<ModuleExt> filterList = modules.stream().filter{ it.name.endsWith(project.name) }.skip(0).collect()
+    private static void modulesRunAlone(Project project, NamedDomainObjectContainer<LibraryExt> modules, boolean isDebug){
+        List<LibraryExt> filterList = modules.stream().filter{ it.name.endsWith(project.name) }.skip(0).collect()
         if (filterList != null && filterList.size() > 0){
-            ModuleExt moduleExt = filterList.get(0)
-            def path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
-            File manifestFile = new File(path)
-            if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
-                println "Unable to find AndroidManifest and create fail, please manually create"
-            }
+            LibraryExt moduleExt = filterList.get(0)
 
-            GPathResult manifest = new XmlSlurper().parse(manifestFile)
-            if (moduleExt.isRunAlone){
+            if (isDebug && moduleExt.isRunAlone){
                 AppPlugin appPlugin = project.plugins.apply(AppPlugin)
-                appPlugin.extension.defaultConfig.setApplicationId(moduleExt.runAloneId)
-
-                println("build run alone modules: [$moduleExt.name]")
-                if (!moduleExt.runAloneActivity.isEmpty()){
-                    new AppManifestStrategy(path).resetManifest(moduleExt, manifest)
+                appPlugin.extension.defaultConfig.setApplicationId(moduleExt.applicationId)
+                if (moduleExt.runAloneSuper != null && !moduleExt.runAloneSuper.isEmpty()){
+                    project.dependencies.add("implementation", project.project(moduleExt.runAloneSuper))
+                    println("build run alone modules: [$moduleExt.name], runSuper = $moduleExt.runAloneSuper")
+                }else{
+                    println("build run alone modules: [$moduleExt.name]")
+                }
+                if (moduleExt.mainActivity != null && !moduleExt.mainActivity.isEmpty()){
+                    new AppManifestStrategy(project).resetManifest(moduleExt)
                 }
             }else{
-                new LibraryManifestStrategy(path).resetManifest(moduleExt, manifest)
+                project.plugins.apply(LibraryPlugin)
+                new LibraryManifestStrategy(project).resetManifest(moduleExt)
             }
-            return moduleExt.isRunAlone
         }
-        return false
-
 
     }
 

@@ -6,14 +6,12 @@ import org.gradle.api.Project
 /**
  * Created by tang on 2018/6/29.
  */
-class AppExt {
-    String name
-    String applicationId
+class AppExt extends ModulesExt{
     String dependMethod = "implementation"
     List<String> modules = new ArrayList<>()
 
-    AppExt(String name){
-        this.name = name
+    AppExt(String name) {
+        super(name)
     }
 
     def name(String name){
@@ -26,6 +24,10 @@ class AppExt {
 
     def dependMethod(String dependMethod){
         this.dependMethod = dependMethod
+    }
+
+    def mainActivity(String mainActivity){
+        this.mainActivity = mainActivity
     }
 
     def modules(String... modules){

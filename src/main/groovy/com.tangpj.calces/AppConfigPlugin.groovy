@@ -2,12 +2,10 @@ package com.tangpj.calces
 
 import com.tangpj.calces.extensions.AppConfigExt
 import com.tangpj.calces.extensions.AppExt
-import com.tangpj.calces.extensions.ModuleExt
+import com.tangpj.calces.extensions.LibraryExt
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-
-import java.util.stream.Collectors
 
 /**
  * Created by tang on 2018/6/12.
@@ -63,7 +61,7 @@ class AppConfigPlugin implements Plugin<Project> {
                 }
         }
 
-        Map<String,List<ModuleExt>> moduleGroupMap =
+        Map<String,List<LibraryExt>> moduleGroupMap =
                 appConfigExt.modules.groupBy{ it.name.startsWith(':') ? it.name : new String(":" + it.name)}
 
         moduleGroupMap.forEach{
@@ -92,11 +90,12 @@ class AppConfigPlugin implements Plugin<Project> {
                 appConfigExt.modules.
                         stream().
                         map{
-                            if (appNameList.contains(it.name)){
+                            String name = it.name.startsWith(':') ? it.name : new String(":" + it.name)
+                            if (appNameList.contains(name)){
                                 throw new IllegalArgumentException("$it.name already configured " +
                                         "as an application, please check appConfig")
                             }
-                            it.name.startsWith(':') ? it.name : new String(":" + it.name)
+                            name
                         }.
                         collect()
 

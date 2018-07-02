@@ -25,11 +25,11 @@ class AppConfigExt {
 
     boolean debugEnable = false
     NamedDomainObjectContainer<AppExt> apps
-    NamedDomainObjectContainer<ModuleExt> modules
+    NamedDomainObjectContainer<LibraryExt> modules
 
     AppConfigExt(Project project){
         apps = project.container(AppExt)
-        modules = project.container(ModuleExt)
+        modules = project.container(LibraryExt)
     }
 
     def debugEnable(boolean debugEnable){
