@@ -1,6 +1,6 @@
 <h1 align="center"><a href="http://tangpj.com/" target="_blank">Calces</a></h1>
 
-> 🍭wow把脑子扔掉，让工具帮你实现Android组件化
+> 🍭wow把脑子扔掉，让工具自动帮你实现Android组件化
 
 <p align="center">
 
@@ -21,6 +21,7 @@
 - [快速开始](#快速开始)
 - [演示](#演示)
 - [属性介绍](#属性介绍)
+- [Todo](#Todo)
 - [License](License)
 
 
@@ -70,7 +71,7 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
        classpath "gradle.plugin.com.tangpj.tools:calces:1.0.11"
      }
    }
-    
+   apply plugin: "calces.appConfig"
    ```
 
    
@@ -124,7 +125,11 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 ## 演示
 
 [**Android-advanced-blueprint**](https://github.com/Tangpj/Android-advanced-blueprint) 
+
+
 该开源项目包含了笔者关于Android进阶系列教程的示例代码，其中TodoCalces是该构建脚本的Demo。
+
+
 
 ## 属性介绍
 
@@ -132,34 +137,54 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 
 - debugEnable
   是否开个debug模式，只有当debugEnbale为true时，modules的isRunAlone才能生效。即modoules只能在debug模式中独立启动
+  
 - apps
   app列表，控制当debug模式为false时的app数量与基础配置
+  
 - modules
   组件列表，配置需要实现自动组件化控制的组件列表
+  
 
 ### App（apps里面的配置项）
 
 - name
   app的名字，需要和项目路径对应，如果不填写默认为该配置的名字（如配置名为app的话，name则为:name）。倒入规则和setting.gradle中的include规则保持一致
+  
 - modules
   需要依赖的组件列表，通过修改该属性实现依赖不同的组件
+  
 - dependMethod
   依赖的方法，默认为implementation，一般不需要配置该字段，除非有特殊需求
+  
 - applicationId
   动态填入applicationId。非特殊情况，建议为空
+  
 - mainActivity
   配置启动Activity，为空则默认为AndroidManifest中的Activity。非特殊情况，建议为空
+  
 
 ### Modules（modules里的配置项）
 
 - name
   与app中的name一致
+  
+
 - isRunAlone
   该组件能否独立启动
+  
+
 - applicationId
   独立启动时的applicationId
+
+  
+
 - mainActivity
   独立启动的Activity
+
+##Todo
+
+- 组件版本管理支持
+- 暂时还没想到...
 
 ##License
 
