@@ -50,7 +50,10 @@ abstract class ManifestStrategy {
             def filter = activity.'intent-filter'.find{
                 it.action.@'android:name' == "android.intent.action.MAIN"
             }
-            if (filter != null && activity.@'android:name' != moduleExt.mainActivity){
+            if (filter != null
+                    && moduleExt.mainActivity != null
+                    && !moduleExt.mainActivity.isEmpty()
+                    && activity.@'android:name' != moduleExt.mainActivity){
                 filter.replaceNode{}
                 edit = true
             }

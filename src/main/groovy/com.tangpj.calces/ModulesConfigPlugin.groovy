@@ -27,6 +27,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 
+import java.util.function.Function
+import java.util.stream.Collector
+import java.util.stream.Collectors
+
 /**
  * Created by tang on 2018/6/16.
  */
@@ -61,15 +65,16 @@ class ModulesConfigPlugin implements Plugin<Project> {
     }
 
     static void dependModules(Project project, AppExt appExt, AppConfigExt appConfigExt){
-        List<LibraryExt> moduleExtList = appConfigExt.modules.stream().filter{
+        Map<String,LibraryExt> moduleExtMap = appConfigExt.modules.stream().filter{
             modules ->
                 String modulesName = appExt.modules.stream().find{ it.contains(modules.name) }
                 modulesName != null && !modulesName.isEmpty()
-        }.skip(0).collect()
+        }.collect(Collectors.toMap({ it.name},{ it -> it}))
 
         if (appExt.modules != null && appExt.modules.size() > 0){
             List<String> modulesList = appExt.modules.stream()
-                    .filter{appConfigExt.debugEnable ? (moduleExtList != null && !moduleExtList.get(0).isRunAlone) : true }
+                    .filter{
+                appConfigExt.debugEnable ? (moduleExtMap != null && !moduleExtMap[it].isRunAlone) : true }
                     .map{
                          project.dependencies.add(appExt.dependMethod, project.project(it))
                          it
