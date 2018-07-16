@@ -180,11 +180,13 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 
 - mainActivity
   独立启动的Activity
+  
 
 ##Todo
 
 - 组件版本管理支持
 - 暂时还没想到...
+  
 
 ##License
 
