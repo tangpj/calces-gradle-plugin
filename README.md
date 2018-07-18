@@ -62,23 +62,23 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
    }
    ```
 
-
-
+   
    在较旧版本的Gradle中或需要动态配置的情况下的插件构建脚本代码：
 
-   ```groovy
-   buildscript {
-     repositories {
-       maven {
-         url "https://plugins.gradle.org/m2/"
-       }
-     }
-     dependencies {
-       classpath "gradle.plugin.com.tangpj.tools:calces:1.0.11"
-     }
-   }
-   apply plugin: "calces.appConfig"
    ```
+      buildscript {
+        repositories {
+          maven {
+            url "https://plugins.gradle.org/m2/"
+          }
+        }
+        dependencies {
+          classpath "gradle.plugin.com.tangpj.tools:calces:1.0.11"
+        }
+      }
+      apply plugin: "calces.appConfig"
+   ```
+
 
    
 
@@ -173,11 +173,9 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 
 - name
   与app中的name一致
-  
 
 - isRunAlone
   该组件能否独立启动
-  
 
 - applicationId
   独立启动时的applicationId
