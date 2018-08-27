@@ -56,7 +56,9 @@ class ModulesConfigPlugin implements Plugin<Project> {
             AppExt appExt = filterList.get(0)
             AppPlugin appPlugin = project.plugins.apply(AppPlugin)
             appPlugin.extension.defaultConfig.setApplicationId(appExt.applicationId)
-            new AppManifestStrategy(project).resetManifest(appExt)
+            AppManifestStrategy strategy = new AppManifestStrategy(project)
+            strategy.resetManifest(appExt)
+            strategy.sourceSet(appPlugin)
             dependModules(project, appExt, appConfigExt)
         }else {
             modulesRunAlone(project,appConfigExt.modules, appConfigExt.debugEnable)
@@ -110,7 +112,9 @@ class ModulesConfigPlugin implements Plugin<Project> {
                     println("build run alone modules: [$moduleExt.name]")
                 }
                 if (moduleExt.mainActivity != null && !moduleExt.mainActivity.isEmpty()){
-                    new AppManifestStrategy(project).resetManifest(moduleExt)
+                    AppManifestStrategy strategy = new AppManifestStrategy(project)
+                    strategy.resetManifest(moduleExt)
+                    strategy.sourceSet(appPlugin)
                 }
             }else{
                 project.plugins.apply(LibraryPlugin)

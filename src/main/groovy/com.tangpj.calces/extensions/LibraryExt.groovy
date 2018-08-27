@@ -40,6 +40,10 @@ class LibraryExt extends ModulesExt{
         this.applicationId = applicationId
     }
 
+    def applicationName(String applicationName){
+        this.applicationName = applicationName
+    }
+
     def runAloneSuper(String runAloneSuper){
         this.runAloneSuper = runAloneSuper
     }

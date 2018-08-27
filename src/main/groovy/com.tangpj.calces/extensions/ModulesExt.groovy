@@ -21,6 +21,7 @@ package com.tangpj.calces.extensions
 class ModulesExt {
     String name
     String applicationId
+    String applicationName
     String mainActivity
 
     ModulesExt(String name){

@@ -1,11 +1,14 @@
 package com.tangpj.calces.utils
 
-import com.tangpj.calces.extensions.LibraryExt
+import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.internal.TaskManager
 import com.tangpj.calces.extensions.ModulesExt
 import groovy.util.slurpersupport.GPathResult
+import groovy.util.slurpersupport.NodeChildren
 import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
 import org.gradle.api.Project
+import org.gradle.api.Task
 
 /**
  * Created by tang on 2018/6/30.
@@ -13,24 +16,30 @@ import org.gradle.api.Project
 abstract class ManifestStrategy {
 
     protected String path
+    protected String outputGroupPath
+    protected String outputPath
     protected GPathResult manifest
-    boolean edit = false
+    private Project project
 
     ManifestStrategy(Project project){
+        this.project = project
         path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
+        outputGroupPath = "${project.getBuildFile().getParent()}/build/generated/source/calces"
+        outputPath = "${project.getBuildFile().getParent()}/build/generated/source/calces/AndroidManifest.xml"
         File manifestFile = new File(path)
         if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
             println "Unable to find AndroidManifest and create fail, please manually create"
         }
-        manifest = new XmlSlurper().parse(manifestFile)
+        manifest = new XmlSlurper(false,false).parse(manifestFile)
     }
 
+    abstract void setApplication(def application, ModulesExt modulesExt)
     abstract void setMainIntentFilter(def activity, boolean isFindMain)
 
     void resetManifest(ModulesExt moduleExt){
+        setApplication(manifest.application, moduleExt)
         if(manifest.@package != moduleExt.applicationId && moduleExt.applicationId != null && !moduleExt.applicationId.isEmpty()){
             manifest.@package = moduleExt.applicationId
-            edit = true
         }
 
         boolean isFindMain = false
@@ -55,7 +64,6 @@ abstract class ManifestStrategy {
                     && !moduleExt.mainActivity.isEmpty()
                     && activity.@'android:name' != moduleExt.mainActivity){
                 filter.replaceNode{}
-                edit = true
             }
         }
 
@@ -63,9 +71,7 @@ abstract class ManifestStrategy {
                 addMainActivity(manifest.application, moduleExt)
         }
 
-        if (edit){
-            buildModulesManifest(manifest)
-        }
+        buildModulesManifest(manifest, moduleExt)
     }
 
     void addMainActivity(def application, ModulesExt modulesExt){
@@ -78,23 +84,33 @@ abstract class ManifestStrategy {
                     }
                 }
             }
-            edit = true
         }
 
     }
 
-    void buildModulesManifest(def manifest){
+    void buildModulesManifest(def manifest, ModulesExt moduleExt, AppPlugin appPlugin) {
 
-        def fileText = new File(path)
-        StreamingMarkupBuilder outputBuilder = new StreamingMarkupBuilder()
-        def root = outputBuilder.bind{
-            mkp.xmlDeclaration()
-            mkp.declareNamespace('android':'http://schemas.android.com/apk/res/android')
-            mkp.yield manifest
-        }
-        String result = XmlUtil.serialize(root)
-        fileText.text = result
+        project.tasks.findByName(TaskManager.MAIN_PREBUILD).doLast {
+            println ":${moduleExt.name}:buildModulesManifest begin"
+            def outputGroupFile = new File(outputGroupPath)
+            if (!outputGroupFile.exists()) {
+                outputGroupFile.mkdirs()
+            }
+            def outputFile = new File(outputPath)
 
+            StreamingMarkupBuilder outputBuilder = new StreamingMarkupBuilder()
+            String root = outputBuilder.bind {
+                mkp.xmlDeclaration()
+                mkp.yield manifest
+            }
+            String result = XmlUtil.serialize(root)
+            outputFile.text = result
+            appPlugin.extension.sourceSets.configure {
+                 main {
+                     manifest.srcFile outputPath
+                 }
+             }
+         }
     }
 }
 
@@ -102,6 +118,20 @@ class AppManifestStrategy extends ManifestStrategy{
 
     AppManifestStrategy(Project project) {
         super(project)
+        NodeChildren
+    }
+
+    @Override
+    void setApplication(def application, ModulesExt modulesExt) {
+        if(modulesExt.applicationName == null || modulesExt.applicationName.isEmpty()) {
+            application.each{
+                it.attributes().remove("android:name")
+            }
+            return
+        }
+        if(application.@'android:name' == null || application.@'android:name' != modulesExt.applicationName){
+            application.@'android:name' =  modulesExt.applicationName
+        }
     }
 
     @Override
@@ -112,10 +142,8 @@ class AppManifestStrategy extends ManifestStrategy{
                     action('android:name':"android.intent.action.MAIN")
                     category('android:name':"android.intent.category.LAUNCHER")}
             }
-            edit = true
         }
     }
-
 }
 
 class LibraryManifestStrategy extends ManifestStrategy{
@@ -125,13 +153,21 @@ class LibraryManifestStrategy extends ManifestStrategy{
     }
 
     @Override
+    void setApplication(def application, ModulesExt modulesExt) {
+        if(!modulesExt.isRunAlone || modulesExt.applicationName == null || modulesExt.applicationName.isEmpty()) {
+            application.each{
+                it.attributes().remove("android:name")
+            }
+        }
+    }
+
+    @Override
     void setMainIntentFilter(def activity, boolean isFindMain) {
         if (isFindMain){
             println "build lib"
             activity.'intent-filter'.each{
                 if(it.action.@'android:name' == "android.intent.action.MAIN"){
                     it.replaceNode{}
-                    edit = true
                 }
             }
         }

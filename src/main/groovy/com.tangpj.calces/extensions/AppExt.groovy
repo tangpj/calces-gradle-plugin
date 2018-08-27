@@ -34,6 +34,10 @@ class AppExt extends ModulesExt{
         this.applicationId = applicationId
     }
 
+    def applicationName(String applicationName){
+        this.applicationName = applicationName
+    }
+
     def dependMethod(String dependMethod){
         this.dependMethod = dependMethod
     }
@@ -48,7 +52,9 @@ class AppExt extends ModulesExt{
 
     @Override
     String toString() {
-        return "app = $name, applicationId = $applicationId, dependMethod = $dependMethod\n" +
+        return "app = $name, applicationId = $applicationId, " +
+                "${applicationName.isEmpty()? "" : "application = $applicationName,"}" +
+                " dependMethod = $dependMethod\n" +
                 "modules: ${modules.isEmpty()? "is empty" : "$modules"}"
     }
 }
