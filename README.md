@@ -10,7 +10,7 @@
 
 <p align="center">
 
-<img alt="Version" src="https://img.shields.io/badge/version-1.0.2-brightgreen.svg"/>
+<img alt="Version" src="https://img.shields.io/badge/version-1.1.0-brightgreen.svg"/>
 <a href="https://plugins.gradle.org/plugin/calces.appconfig"><img alt="AppConfig" src="https://img.shields.io/badge/plugin-appConfig-blue.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.modules"><img alt="Modules" src="https://img.shields.io/badge/plugin-modules-yellowgreen.svg"/></a>
 <a href="http://tangpj.com"><img alt="Author" src="https://img.shields.io/badge/author-Tangpj-ff69b4.svg"/></a>
@@ -28,7 +28,7 @@
 - [演示](#演示)
 - [属性介绍](#属性介绍)
 - [UPDATE](#UPDATE)
-- [Todo](#Todo)
+- [TODO](#TODO)
 - [License](#License)
 
 
@@ -59,7 +59,7 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
        ...
    }
    plugins {
-     id "calces.modules" version "1.0.11"
+     id "calces.appconfig" version "1.1.0"
    }
    ```
 
@@ -74,7 +74,7 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
           }
         }
         dependencies {
-          classpath "gradle.plugin.com.tangpj.tools:calces:1.0.11"
+          classpath "gradle.plugin.com.tangpj.tools:calces:1.1.0"
         }
       }
       apply plugin: "calces.appConfig"
@@ -184,13 +184,13 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 
 ## UPDATE
 
-### Version 1.2.0
+### Version 1.1.0
 
 - 增加applicationName属性，用于配置启动application
 - 不再直接对AndroidManifest进行修改，改成根据配置动态生成新的AndroidManifest的模式，生成目录：/app/calces
   建议在使用版本管理的时候忽略对calces文件夹的跟踪。
 
-## Todo
+## TODO
 
 - 组件版本管理支持
 - 暂时还没想到...
