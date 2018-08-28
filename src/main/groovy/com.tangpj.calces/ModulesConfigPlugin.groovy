@@ -57,8 +57,7 @@ class ModulesConfigPlugin implements Plugin<Project> {
             AppPlugin appPlugin = project.plugins.apply(AppPlugin)
             appPlugin.extension.defaultConfig.setApplicationId(appExt.applicationId)
             AppManifestStrategy strategy = new AppManifestStrategy(project)
-            strategy.resetManifest(appExt)
-            strategy.sourceSet(appPlugin)
+            strategy.resetManifest(appExt, appPlugin, appConfigExt.isDebugEnable())
             dependModules(project, appExt, appConfigExt)
         }else {
             modulesRunAlone(project,appConfigExt.modules, appConfigExt.debugEnable)
@@ -113,12 +112,11 @@ class ModulesConfigPlugin implements Plugin<Project> {
                 }
                 if (moduleExt.mainActivity != null && !moduleExt.mainActivity.isEmpty()){
                     AppManifestStrategy strategy = new AppManifestStrategy(project)
-                    strategy.resetManifest(moduleExt)
-                    strategy.sourceSet(appPlugin)
+                    strategy.resetManifest(moduleExt, appPlugin, isDebug)
                 }
             }else{
-                project.plugins.apply(LibraryPlugin)
-                new LibraryManifestStrategy(project).resetManifest(moduleExt)
+                LibraryPlugin libraryPlugin = project.plugins.apply(LibraryPlugin)
+                new LibraryManifestStrategy(project).resetManifest(moduleExt, libraryPlugin, isDebug)
             }
         }
 

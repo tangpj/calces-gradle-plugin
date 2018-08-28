@@ -1,7 +1,11 @@
 package com.tangpj.calces.utils
 
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.TaskManager
+import com.android.build.gradle.internal.tasks.SourceSetsTask
+import com.tangpj.calces.extensions.LibraryExt
 import com.tangpj.calces.extensions.ModulesExt
 import groovy.util.slurpersupport.GPathResult
 import groovy.util.slurpersupport.NodeChildren
@@ -9,6 +13,7 @@ import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.java.archives.Manifest
 
 /**
  * Created by tang on 2018/6/30.
@@ -24,8 +29,8 @@ abstract class ManifestStrategy {
     ManifestStrategy(Project project){
         this.project = project
         path = "${project.getBuildFile().getParent()}/src/main/AndroidManifest.xml"
-        outputGroupPath = "${project.getBuildFile().getParent()}/build/generated/source/calces"
-        outputPath = "${project.getBuildFile().getParent()}/build/generated/source/calces/AndroidManifest.xml"
+        outputGroupPath = "${project.getBuildFile().getParent()}/calces"
+        outputPath = "${project.getBuildFile().getParent()}/calces/AndroidManifest.xml"
         File manifestFile = new File(path)
         if (!manifestFile.getParentFile().exists() && !manifestFile.getParentFile().mkdirs()){
             println "Unable to find AndroidManifest and create fail, please manually create"
@@ -36,7 +41,7 @@ abstract class ManifestStrategy {
     abstract void setApplication(def application, ModulesExt modulesExt)
     abstract void setMainIntentFilter(def activity, boolean isFindMain)
 
-    void resetManifest(ModulesExt moduleExt){
+    void resetManifest(ModulesExt moduleExt, BasePlugin appPlugin, boolean isDebug){
         setApplication(manifest.application, moduleExt)
         if(manifest.@package != moduleExt.applicationId && moduleExt.applicationId != null && !moduleExt.applicationId.isEmpty()){
             manifest.@package = moduleExt.applicationId
@@ -71,7 +76,7 @@ abstract class ManifestStrategy {
                 addMainActivity(manifest.application, moduleExt)
         }
 
-        buildModulesManifest(manifest, moduleExt)
+        buildModulesManifest(manifest, moduleExt, appPlugin, isDebug)
     }
 
     void addMainActivity(def application, ModulesExt modulesExt){
@@ -88,29 +93,39 @@ abstract class ManifestStrategy {
 
     }
 
-    void buildModulesManifest(def manifest, ModulesExt moduleExt, AppPlugin appPlugin) {
+    void buildModulesManifest(def manifestFile, ModulesExt moduleExt, BasePlugin appPlugin, boolean isDebug) {
+        println ":${moduleExt.name}cleanBuildModulesManifest"
+        def outputGroupFile = new File(outputGroupPath)
+        if (outputGroupFile.exists()){
+            outputGroupFile.deleteDir()
+        }
+        if ((moduleExt instanceof LibraryExt) && !((moduleExt as LibraryExt).isRunAlone && isDebug)){
+            return
+        }
+        if(moduleExt.applicationName == null ||
+                moduleExt.applicationName.isEmpty()) return
+        println ":${moduleExt.name}buildModulesManifest"
+        outputGroupFile = new File(outputGroupPath)
+        if (!outputGroupFile.exists()) {
+            outputGroupFile.mkdirs()
+        }
+        def outputFile = new File(outputPath)
 
-        project.tasks.findByName(TaskManager.MAIN_PREBUILD).doLast {
-            println ":${moduleExt.name}:buildModulesManifest begin"
-            def outputGroupFile = new File(outputGroupPath)
-            if (!outputGroupFile.exists()) {
-                outputGroupFile.mkdirs()
+        StreamingMarkupBuilder outputBuilder = new StreamingMarkupBuilder()
+        String root = outputBuilder.bind {
+            mkp.xmlDeclaration()
+            mkp.yield manifestFile
+        }
+        String result = XmlUtil.serialize(root)
+        outputFile.text = result
+        if (appPlugin instanceof AppPlugin){
+            appPlugin.extension.sourceSets{
+                main {
+                    manifest.srcFile(outputPath)
+                }
             }
-            def outputFile = new File(outputPath)
+        }
 
-            StreamingMarkupBuilder outputBuilder = new StreamingMarkupBuilder()
-            String root = outputBuilder.bind {
-                mkp.xmlDeclaration()
-                mkp.yield manifest
-            }
-            String result = XmlUtil.serialize(root)
-            outputFile.text = result
-            appPlugin.extension.sourceSets.configure {
-                 main {
-                     manifest.srcFile outputPath
-                 }
-             }
-         }
     }
 }
 

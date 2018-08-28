@@ -10,7 +10,7 @@
 
 <p align="center">
 
-<img alt="Version" src="https://img.shields.io/badge/version-1.0.1--SNAPSHOT-brightgreen.svg"/>
+<img alt="Version" src="https://img.shields.io/badge/version-1.0.2-brightgreen.svg"/>
 <a href="https://plugins.gradle.org/plugin/calces.appconfig"><img alt="AppConfig" src="https://img.shields.io/badge/plugin-appConfig-blue.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.modules"><img alt="Modules" src="https://img.shields.io/badge/plugin-modules-yellowgreen.svg"/></a>
 <a href="http://tangpj.com"><img alt="Author" src="https://img.shields.io/badge/author-Tangpj-ff69b4.svg"/></a>
@@ -27,6 +27,7 @@
 - [快速开始](#快速开始)
 - [演示](#演示)
 - [属性介绍](#属性介绍)
+- [UPDATE](#UPDATE)
 - [Todo](#Todo)
 - [License](#License)
 
@@ -80,7 +81,7 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
    ```
 
 
-   
+
 
 2. 在项目build.gradle配置AppConfig
 
@@ -155,36 +156,39 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 
 - name
   app的名字，需要和项目路径对应，如果不填写默认为该配置的名字（如配置名为app的话，name则为:name）。倒入规则和setting.gradle中的include规则保持一致
-  
 - modules
   需要依赖的组件列表，通过修改该属性实现依赖不同的组件
-  
 - dependMethod
   依赖的方法，默认为implementation，一般不需要配置该字段，除非有特殊需求
-  
 - applicationId
   动态填入applicationId。非特殊情况，建议为空
-  
+- applicationName
+  配置启动Application（对应manifest中的application name属性）
 - mainActivity
   配置启动Activity，为空则默认为AndroidManifest中的Activity。非特殊情况，建议为空
-  
+
 
 ### Modules（modules里的配置项）
 
 - name
   与app中的name一致
-
 - isRunAlone
   该组件能否独立启动
-
 - applicationId
   独立启动时的applicationId
 
-  
-
+- applicationName
+  配置启动Application（对应manifest中的application name属性）
 - mainActivity
   独立启动的Activity
-  
+
+## UPDATE
+
+### Version 1.2.0
+
+- 增加applicationName属性，用于配置启动application
+- 不再直接对AndroidManifest进行修改，改成根据配置动态生成新的AndroidManifest的模式，生成目录：/app/calces
+  建议在使用版本管理的时候忽略对calces文件夹的跟踪。
 
 ## Todo
 
