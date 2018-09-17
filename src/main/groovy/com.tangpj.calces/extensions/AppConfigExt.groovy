@@ -20,6 +20,7 @@ import org.gradle.api.Project
 
 /**
  * Created by tang on 2018/6/14.
+ * App项目配置ext，用于配置项目的状态与项目的app
  */
 class AppConfigExt {
 

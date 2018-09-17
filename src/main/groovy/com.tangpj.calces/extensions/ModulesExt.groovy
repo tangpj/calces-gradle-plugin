@@ -17,6 +17,7 @@ package com.tangpj.calces.extensions
 
 /**
  * Created by tang on 2018/7/2.
+ * 模块配置，App配置与Lib配置都继承该配置
  */
 class ModulesExt {
     String name

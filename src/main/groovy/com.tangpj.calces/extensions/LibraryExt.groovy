@@ -17,6 +17,7 @@ package com.tangpj.calces.extensions
 
 /**
  * Created by tang on 2018/6/24.
+ * 库配置，用于配置库的基础信息
  */
 class LibraryExt extends ModulesExt{
     boolean isRunAlone = false

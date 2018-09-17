@@ -17,6 +17,7 @@ package com.tangpj.calces.extensions
 
 /**
  * Created by tang on 2018/6/29.
+ * App配置，配置App的基础信息
  */
 class AppExt extends ModulesExt{
     String dependMethod = "implementation"
