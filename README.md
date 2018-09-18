@@ -189,6 +189,11 @@ Android组件化构建Gradle插件，能够通过Gradle配置App依赖的组件�
 - 增加applicationName属性，用于配置启动application
 - 不再直接对AndroidManifest进行修改，改成根据配置动态生成新的AndroidManifest的模式，生成目录：/app/calces
   建议在使用版本管理的时候忽略对calces文件夹的跟踪。
+  
+### Version 1.2.0 增加ScreenPlugin屏幕适配插件
+- 根据配置自动把高分辨率图片压缩成其它分辨率图片
+- 可指定设计稿尺寸width，根据设计稿width值生成适配文件
+- 屏幕适配方案为smallestWidth方案
 
 ## TODO
 
