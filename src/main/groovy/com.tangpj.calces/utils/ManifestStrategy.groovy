@@ -2,18 +2,12 @@ package com.tangpj.calces.utils
 
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BasePlugin
-import com.android.build.gradle.LibraryPlugin
-import com.android.build.gradle.internal.TaskManager
-import com.android.build.gradle.internal.tasks.SourceSetsTask
 import com.tangpj.calces.extensions.LibraryExt
 import com.tangpj.calces.extensions.ModulesExt
 import groovy.util.slurpersupport.GPathResult
-import groovy.util.slurpersupport.NodeChildren
 import groovy.xml.StreamingMarkupBuilder
 import groovy.xml.XmlUtil
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.java.archives.Manifest
 
 /**
  * Created by tang on 2018/6/30.
@@ -133,7 +127,6 @@ class AppManifestStrategy extends ManifestStrategy{
 
     AppManifestStrategy(Project project) {
         super(project)
-        NodeChildren
     }
 
     @Override

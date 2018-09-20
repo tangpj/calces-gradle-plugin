@@ -1,40 +1,38 @@
 package com.tangpj.calces.extensions
 
+import org.gradle.api.Action
+
 /**
  * Created by tang on 2018/9/17.
  * App屏幕支持配置ext，用于配置图片支持
  */
 class ScreenExt {
 
-    //需要适配的sw尺寸，单位dp
-    List<Integer> smallestWidths = new ArrayList<>()
+    boolean auto = false
 
-    //图片资源密度
-    List<String> mipmapDensity = new ArrayList<>()
+    DimensExt dimensExt
 
-    //基础缩放mipmap
-    String designDensity
+    MipmapExt mipmapExt
 
-    //设计稿尺寸
-    int designPx = 375
-
-
-    def smallesWidths(Integer... sw){
-        this.smallestWidths.addAll(sw)
+    ScreenExt(){
+        dimensExt = new DimensExt()
+        mipmapExt = new MipmapExt()
     }
 
-    def mipmapDensity(String... density){
-        this.mipmapDensity.addAll(density)
+    def auto(boolean auto){
+        this.auto = auto
     }
 
-    def designDensity(String designDensity){
-        this.designDensity = designDensity
+    def dimens(Action<DimensExt> action){
+        action.execute(this.dimensExt)
     }
 
-    def designPx(int designPx){
-        this.designPx = designPx
+    def mipmap(Action<MipmapExt> action){
+        action.execute(this.mipmapExt)
     }
 
-
-
+    @Override
+    String toString() {
+        return "auto = $auto; dimens = { $dimensExt }; mipmap = {$mipmapExt }"
+    }
 }

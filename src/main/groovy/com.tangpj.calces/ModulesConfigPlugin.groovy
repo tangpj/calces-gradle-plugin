@@ -27,8 +27,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 
-import java.util.function.Function
-import java.util.stream.Collector
 import java.util.stream.Collectors
 
 /**

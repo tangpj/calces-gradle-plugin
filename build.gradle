@@ -2,7 +2,7 @@ apply plugin: 'groovy'
 
 apply plugin: 'maven'
 group = 'com.tangpj.tools'
-version = '1.1.0'
+version = '1.2.0'
 
 archivesBaseName = 'calces-gradle-plugin'
 
@@ -48,6 +48,11 @@ pluginBundle {
         modulesPlugin {
             id = 'calces.modules' // 就是刚才定义属性文件时使用的ID
             displayName = 'ModulesConfigPlugin' // 添加依赖时使用的名字
+        }
+
+        screenPlugin{
+            id = 'calces.screen'
+            displayName = "ScreenPlugin"
         }
     }
 }
