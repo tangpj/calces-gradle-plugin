@@ -9,7 +9,7 @@ class DimensConvert {
 
     private String fileGroupFormat = "values-sw%ddp"
     private String designDimensPath
-    private String outputPath
+    private String outputGroup
     private Project project
     private DimensExt dimensExt
 
@@ -19,7 +19,7 @@ class DimensConvert {
         this.project = project
         this.dimensExt = dimensExt
         this.designDimensPath = "${project.getBuildFile().getParent()}/src/main/res/values/dimens.xml"
-        this.outputPath = "${project.getBuildFile().getParent()}/src/main/res/%s"
+        this.outputGroup = "${project.getBuildFile().getParent()}/src/main/res"
     }
 
     def createSwDimens(){
@@ -28,11 +28,12 @@ class DimensConvert {
             println "Unable to find dimens and create fail, please manually create"
         }
         dimensExt.smallestWidths.forEach{
-            convertSwDimens(it, dimensExt.designPx, designDimens)
+            StringWriter outSw = convertSwDimens(it, dimensExt.designPx, designDimens)
+            outputSwDimens(outSw, it)
         }
     }
 
-    GPathResult convertSwDimens(int targetSw, int designPx, File designDimens){
+    private static StringWriter convertSwDimens(int targetSw, int designPx, File designDimens){
         Map<String,String> dimensMap =  new LinkedHashMap<>()
         GPathResult resources = new XmlSlurper(false,false).parse(designDimens)
         resources.dimen.forEach{ GPathResult it ->
@@ -53,7 +54,17 @@ class DimensConvert {
                 dimen(name:key, value)
             }
         }
-        println(out)
-        return resources
+        return out
+    }
+
+    private void outputSwDimens(StringWriter sw, int targetSw){
+        def outputGroupPath = "$outputGroup/values-sw${targetSw}dp"
+        def outputSwPath = "$outputGroup/values-sw${targetSw}dp/dimens.xml"
+        def outputGroupFile = new File(outputGroupPath)
+        if (!outputGroupFile.exists()) {
+            outputGroupFile.mkdirs()
+        }
+        File outputSwFile = new File(outputSwPath)
+        outputSwFile.text = sw.toString()
     }
 }

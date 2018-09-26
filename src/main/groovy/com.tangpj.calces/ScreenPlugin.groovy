@@ -17,8 +17,11 @@ class ScreenPlugin implements Plugin<Project> {
         ScreenExt screenExt = target.extensions.create(EXTENSION_NAME,ScreenExt)
         designMap = new LinkedHashMap<String,String>()
         target.afterEvaluate {
-            new DimensConvert(target, screenExt.dimensExt).createSwDimens()
-            println(screenExt)
+            if (screenExt.auto){
+                new DimensConvert(target, screenExt.dimensExt).createSwDimens()
+                println(screenExt)
+            }
+
         }
     }
 }
