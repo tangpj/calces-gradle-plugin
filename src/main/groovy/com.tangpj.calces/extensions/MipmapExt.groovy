@@ -8,6 +8,8 @@ class MipmapExt {
     //图片资源密度
     Set<String> convertDensity = new ArrayList<>()
 
+    boolean auto = false
+
     def designDensity(String designDensity){
         this.designDensity = designDensity
     }
@@ -16,8 +18,12 @@ class MipmapExt {
         this.convertDensity.addAll(density)
     }
 
+    def auto(boolean auto){
+        this.auto = auto
+    }
+
     @Override
     String toString() {
-        return "designDensity: $designDensity, corvent density: ${convertDensity.join(",")}"
+        return "auto: $auto, designDensity: $designDensity, corvent density: ${convertDensity.join(",")}"
     }
 }

@@ -10,6 +10,10 @@ class DimensExt {
     //设计稿尺寸
     int designPx = 375
 
+    int scale = -1
+
+    boolean auto = false
+
     //需要适配的sw尺寸，单位dp
     Set<Integer> smallestWidths = new HashSet<>()
 
@@ -26,8 +30,16 @@ class DimensExt {
         this.smallestWidths.addAll(sw)
     }
 
+    def scale(int  scale){
+        this.scale = scale
+    }
+
+    def auto(boolean auto){
+        this.auto = auto
+    }
+
     @Override
     String toString() {
-        return "designPx: $designPx, corvent small widths: ${smallestWidths.join(",")}"
+        return "auto: $auto, designPx: $designPx, scale: $scale, corvent small widths: ${smallestWidths.join(",")}"
     }
 }

@@ -8,8 +8,6 @@ import org.gradle.api.Action
  */
 class ScreenExt {
 
-    boolean auto = false
-
     DimensExt dimensExt
 
     MipmapExt mipmapExt
@@ -17,10 +15,6 @@ class ScreenExt {
     ScreenExt(){
         dimensExt = new DimensExt()
         mipmapExt = new MipmapExt()
-    }
-
-    def auto(boolean auto){
-        this.auto = auto
     }
 
     def dimens(Action<DimensExt> action){
@@ -33,6 +27,6 @@ class ScreenExt {
 
     @Override
     String toString() {
-        return "auto = $auto; dimens = { $dimensExt }; mipmap = {$mipmapExt }"
+        return "dimens = { $dimensExt }; mipmap = {$mipmapExt }"
     }
 }

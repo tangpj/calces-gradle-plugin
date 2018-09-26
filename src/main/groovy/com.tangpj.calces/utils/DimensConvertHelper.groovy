@@ -5,7 +5,7 @@ import groovy.util.slurpersupport.GPathResult
 import groovy.xml.MarkupBuilder
 import org.gradle.api.Project
 
-class DimensConvert {
+class DimensConvertHelper {
 
     private String fileGroupFormat = "values-sw%ddp"
     private String designDimensPath
@@ -14,8 +14,7 @@ class DimensConvert {
     private DimensExt dimensExt
 
 
-
-    DimensConvert( Project project, DimensExt dimensExt){
+    DimensConvertHelper(Project project, DimensExt dimensExt){
         this.project = project
         this.dimensExt = dimensExt
         this.designDimensPath = "${project.getBuildFile().getParent()}/src/main/res/values/dimens.xml"
@@ -24,6 +23,9 @@ class DimensConvert {
 
     def createSwDimens(){
         File designDimens = new File(designDimensPath)
+        if (!designDimens.exists()){
+            return
+        }
         if (!designDimens.getParentFile().exists() && !designDimens.getParentFile().mkdirs()){
             println "Unable to find dimens and create fail, please manually create"
         }
@@ -33,7 +35,7 @@ class DimensConvert {
         }
     }
 
-    private static StringWriter convertSwDimens(int targetSw, int designPx, File designDimens){
+    private StringWriter convertSwDimens(int targetSw, int designPx, File designDimens){
         Map<String,String> dimensMap =  new LinkedHashMap<>()
         GPathResult resources = new XmlSlurper(false,false).parse(designDimens)
         resources.dimen.forEach{ GPathResult it ->
@@ -41,9 +43,16 @@ class DimensConvert {
             if (node.endsWith("dp") || node.endsWith("sp")){
                 String unit = node.substring(node.length() - 2, node.length())
                 int value = node.substring(0, node.length() - 2).toInteger()
-                def covert = targetSw / designPx * value
+                BigDecimal covert = BigDecimal.valueOf(targetSw / designPx * value)
+                def dimens
+                if (dimensExt.scale != -1){
+                    dimens = covert.setScale(0, dimensExt.scale).intValue()
+                }else{
+                    dimens = covert.doubleValue()
+                }
+
                 String key = it.@name.text()
-                dimensMap.put(key,covert + unit)
+                dimensMap.put(key,dimens + unit)
             }
         }
         def out =new StringWriter()
