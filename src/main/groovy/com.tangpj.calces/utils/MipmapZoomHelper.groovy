@@ -40,21 +40,26 @@ class MipmapZoomHelper {
         this.project = project
         this.mipmapGroupPathFormat =  "${project.getBuildFile().getParent()}/src/main/res/mipmap-"
 
-
     }
 
     /**
      * 对外提供图片压缩处理功能
      */
     public void zoom(){
+        if (!scaleMap.containsKey(mipmapExt.designDensity)) return
         File designGroup = new File("$mipmapGroupPathFormat$mipmapExt.designDensity")
         if (!designGroup.exists()) return
-
         Map<String, Set<String>> mipmapMap = new HashMap<>()
-        List<String> mipmapList = new ArrayList<>()
-        mipmapList.addAll(mipmapExt.convertDensity)
+        Set<String> mipmapList = new HashSet<>()
+        List<String> covertList = new ArrayList<>(mipmapExt.convertDensity)
+        covertList = covertList
+                .stream()
+                .filter{ scaleMap.get(it) < scaleMap.get(mipmapExt.designDensity) }
+                .collect(Collectors.toList()) as List<String>
+        mipmapList.addAll(covertList)
         mipmapList.add(mipmapExt.designDensity)
-        mipmapList.forEach{
+        mipmapList.stream().filter{ scaleMap.containsKey(it) }
+                .forEach{
             if (it == mipmapExt.designDensity){
                 mipmapMap.put(mipmapExt.designDensity, initImageSet(designGroup))
             }else{
