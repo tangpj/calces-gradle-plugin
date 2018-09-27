@@ -6,7 +6,7 @@ class MipmapExt {
     String designDensity
 
     //图片资源密度
-    Set<String> convertDensity = new ArrayList<>()
+    Set<String> convertDensity = new HashSet<>()
 
     boolean auto = false
 
