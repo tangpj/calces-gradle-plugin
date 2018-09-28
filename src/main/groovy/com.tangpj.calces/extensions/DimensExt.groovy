@@ -17,11 +17,6 @@ class DimensExt {
     //需要适配的sw尺寸，单位dp
     Set<Integer> smallestWidths = new HashSet<>()
 
-    DimensExt(){
-        //默认至少会生成一个sw尺寸(360)
-        smallestWidths.add(360)
-    }
-
     def designPx(int designPx){
         this.designPx = designPx
     }

@@ -7,7 +7,6 @@ import org.gradle.api.Project
 
 class DimensConvertHelper {
 
-    private String fileGroupFormat = "values-sw%ddp"
     private String designDimensPath
     private String outputGroup
     private Project project
