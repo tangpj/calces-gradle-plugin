@@ -6,13 +6,14 @@
 
 <h1 align="center"><a href="http://tangpj.com/" target="_blank">Calces</a></h1>
 
-> 🍭wow Android辅助构建工具，从此你不再需要关注屏幕适配与组件化构建了
+> 🍭wow Android辅助构建工具，机械性工作交给我来处理，把时间用在更有价值的工作上。
 
 <p align="center">
 
 <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-brightgreen.svg"/>
 <a href="https://plugins.gradle.org/plugin/calces.appconfig"><img alt="AppConfig" src="https://img.shields.io/badge/plugin-appConfig-blue.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.modules"><img alt="Modules" src="https://img.shields.io/badge/plugin-modules-yellowgreen.svg"/></a>
+<a href="https://plugins.gradle.org/plugin/calces.screen"><img alt="Modules" src="https://img.shields.io/badge/plugin-screen-%23B2EBF2.svg"/></a>
 <a href="http://tangpj.com"><img alt="Author" src="https://img.shields.io/badge/author-Tangpj-ff69b4.svg"/></a>
 <a href="http://groovy-lang.org/"><img alt="Gradle" src="https://img.shields.io/badge/groovy-2.4.12-orange.svg"/></a>
 <a href="https://developer.android.com/studio/releases/gradle-plugin"><img alt="Gradle" src="https://img.shields.io/badge/build%3Agradle-3.1.3-green.svg"/></a>
@@ -23,7 +24,7 @@
 ## 目录
 
 - [介绍](#介绍)
-- [功能](#功能)
+- [功能介绍](#功能介绍)
 - [快速开始](#快速开始)
 - [演示](#演示)
 - [属性介绍](#属性介绍)
@@ -34,15 +35,18 @@
 
 
 ## 介绍
-Android构建工具包，提供自动组件化控制与屏幕适配功能。
+Android构建工具包，这个工具的主旨是使用脚本自动处理机械化的重复劳动，让开发者专注更有价值的工作。
+目前提供自动组件化控制与屏幕适配插件。
+
 - 组件化构建Gradle插件
 提供Gradle配置App依赖的组件、配置组件是否能单独运行、实现多个依赖不同模块的App同时构建等。
+
 - 屏幕适配工具
 根据设计稿与配置，自动生成smallestWidth适配文件，让你从此不需要再关注屏幕适配。
 
 
 
-## 功能
+## 功能介绍
 
 ### 自动组件化构建插件
 - 根据Gradle配置，自动实现Android组件的构建模式（application or library）
@@ -250,9 +254,12 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 - 可指定设计稿尺寸width，根据设计稿width值生成对应适配文件
 - 屏幕适配方案为smallestWidth方案
 
+### Version 1.2.3 ScreenPlugin支持位图缩放功能
+- 可以根据配置，实现高分辨率位图自动缩放为低分辨率位图
+
 ## TODO
 
-- 自动把高分辨率图片转换成低分辨率图片
+- 位图自动压缩，减少安装包体积
 - 组件版本管理支持
 - 暂时还没想到...
   
