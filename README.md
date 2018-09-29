@@ -250,12 +250,18 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 - 不再直接对AndroidManifest进行修改，改成根据配置动态生成新的AndroidManifest的模式，生成目录：/app/calces
   建议在使用版本管理的时候忽略对calces文件夹的跟踪。
   
-### Version 1.2.0 增加ScreenPlugin屏幕适配插件
+### Version 1.2.0 
+- 增加ScreenPlugin屏幕适配插件
 - 可指定设计稿尺寸width，根据设计稿width值生成对应适配文件
 - 屏幕适配方案为smallestWidth方案
 
-### Version 1.2.3 ScreenPlugin支持位图缩放功能
+### Version 1.2.3 
+- ScreenPlugin支持位图缩放功能
 - 可以根据配置，实现高分辨率位图自动缩放为低分辨率位图
+
+### Version 1.2.31 
+- 修复ModulesPlugin无法编译Manifest BUG
+
 
 ## TODO
 

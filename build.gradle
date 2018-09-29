@@ -2,7 +2,7 @@ apply plugin: 'groovy'
 
 apply plugin: 'maven'
 group = 'com.tangpj.tools'
-version = '1.2.3'
+version = '1.2.31'
 
 archivesBaseName = 'calces-gradle-plugin'
 

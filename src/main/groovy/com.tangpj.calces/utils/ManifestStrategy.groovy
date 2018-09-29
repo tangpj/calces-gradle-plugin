@@ -96,8 +96,7 @@ abstract class ManifestStrategy {
         if ((moduleExt instanceof LibraryExt) && !((moduleExt as LibraryExt).isRunAlone && isDebug)){
             return
         }
-        if(moduleExt.applicationName == null ||
-                moduleExt.applicationName.isEmpty()) return
+
         println ":${moduleExt.name}buildModulesManifest"
         outputGroupFile = new File(outputGroupPath)
         if (!outputGroupFile.exists()) {
@@ -137,7 +136,8 @@ class AppManifestStrategy extends ManifestStrategy{
             }
             return
         }
-        if(application.@'android:name' == null || application.@'android:name' != modulesExt.applicationName){
+        if(application.@'android:name' == null ||
+                application.@'android:name' != modulesExt.applicationName){
             application.@'android:name' =  modulesExt.applicationName
         }
     }
