@@ -10,7 +10,7 @@
 
 <p align="center">
 
-<img alt="Version" src="https://img.shields.io/badge/version-1.1.0-brightgreen.svg"/>
+<img alt="Version" src="https://img.shields.io/badge/version-1.2.3-brightgreen.svg"/>
 <a href="https://plugins.gradle.org/plugin/calces.appconfig"><img alt="AppConfig" src="https://img.shields.io/badge/plugin-appConfig-blue.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.modules"><img alt="Modules" src="https://img.shields.io/badge/plugin-modules-yellowgreen.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.screen"><img alt="Modules" src="https://img.shields.io/badge/plugin-screen-%23B2EBF2.svg"/></a>
