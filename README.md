@@ -10,7 +10,7 @@
 
 <p align="center">
 
-<img alt="Version" src="https://img.shields.io/badge/version-1.2.4-brightgreen.svg"/>
+<img alt="Version" src="https://img.shields.io/badge/version-1.2.42-brightgreen.svg"/>
 <a href="https://plugins.gradle.org/plugin/calces.appconfig"><img alt="AppConfig" src="https://img.shields.io/badge/plugin-appConfig-blue.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.modules"><img alt="Modules" src="https://img.shields.io/badge/plugin-modules-yellowgreen.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.screen"><img alt="Modules" src="https://img.shields.io/badge/plugin-screen-%23B2EBF2.svg"/></a>
@@ -76,7 +76,7 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
        ...
    }
    plugins {
-     id "calces.appconfig" version "1.1.0"
+     id "calces.appconfig" version "1.2.42"
    }
    ```
 
@@ -91,7 +91,7 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
           }
         }
         dependencies {
-          classpath "gradle.plugin.com.tangpj.tools:calces:1.1.0"
+          classpath "gradle.plugin.com.tangpj.tools:calces:1.2.42"
         }
       }
       apply plugin: "calces.appConfig"
@@ -154,7 +154,7 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
        ...
    }
    plugins {
-     id "calces.screen" version "1.1.0"
+     id "calces.screen" version "1.2.42"
    }
    apply plugin: "calces.screen"
    ```
@@ -170,7 +170,7 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
           }
         }
         dependencies {
-          classpath "gradle.plugin.com.tangpj.tools:calces:1.1.0"
+          classpath "gradle.plugin.com.tangpj.tools:calces:1.2.42"
         }
       }
       apply plugin: "calces.screen"
@@ -292,7 +292,7 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 ### Version 1.2.31 
 - 修复ModulesPlugin无法编译Manifest BUG
 
-### Version 1.2.4
+### Version 1.2.42
 - screen插件提供转换文件路径控制。
   dimens任务提供配置dimensFileName字段( 控制待转换dimensions文件的名称)
   mipmap任务提供配置folder字段( 控制图片资源保存路径，目的时支持采用drawable保存图片资源的项目)
