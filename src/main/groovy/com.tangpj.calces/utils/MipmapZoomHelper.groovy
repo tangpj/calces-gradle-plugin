@@ -53,7 +53,7 @@ class MipmapZoomHelper {
     MipmapZoomHelper(Project project, MipmapExt mipmapExt){
         this.mipmapExt = mipmapExt
         this.project = project
-        this.mipmapGroupPathFormat =  "${project.getBuildFile().getParent()}/src/main/res/mipmap-"
+        this.mipmapGroupPathFormat =  "${project.getBuildFile().getParent()}/src/main/res/$mipmapExt.folder-"
 
     }
 
@@ -63,7 +63,8 @@ class MipmapZoomHelper {
     public void zoom(){
         if (!scaleMap.containsKey(mipmapExt.designDensity)) return
         File designGroup = new File("$mipmapGroupPathFormat$mipmapExt.designDensity")
-        if (!designGroup.exists()) return
+        if (!designGroup.exists())
+            throw new UnknownError("Unable to find ${designGroup.name}, please check your configuration")
         Map<String, Set<String>> mipmapMap = new HashMap<>()
         Set<String> mipmapList = new HashSet<>()
         List<String> covertList = new ArrayList<>(mipmapExt.convertDensity)

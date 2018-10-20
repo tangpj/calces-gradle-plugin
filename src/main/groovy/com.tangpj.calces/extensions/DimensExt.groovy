@@ -21,6 +21,9 @@ package com.tangpj.calces.extensions
  */
 class DimensExt {
 
+
+    String dimensFileName = "dimens"
+
     //设计稿尺寸
     int designPx = 375
 
@@ -30,6 +33,10 @@ class DimensExt {
 
     //需要适配的sw尺寸，单位dp
     Set<Integer> smallestWidths = new HashSet<>()
+
+    def dimensFileName(String dimensFileName){
+        this.dimensFileName = dimensFileName
+    }
 
     def designPx(int designPx){
         this.designPx = designPx

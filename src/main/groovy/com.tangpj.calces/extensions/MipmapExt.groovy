@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, The TangPj
+ * Copyright 2018, The TangPJ
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package com.tangpj.calces.extensions
 
 class MipmapExt {
 
+    //文件夹名字，默认 mipmap
+    String folder = "mipmap"
+
     //基础缩放mipmap
     String designDensity
 
@@ -24,6 +27,10 @@ class MipmapExt {
     Set<String> convertDensity = new HashSet<>()
 
     boolean auto = false
+
+    def folder(String folder){
+        this.folder = folder
+    }
 
     def designDensity(String designDensity){
         this.designDensity = designDensity

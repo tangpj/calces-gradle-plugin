@@ -2,7 +2,7 @@ apply plugin: 'groovy'
 
 apply plugin: 'maven'
 group = 'com.tangpj.tools'
-version = '1.2.31'
+version = '1.2.4'
 
 archivesBaseName = 'calces-gradle-plugin'
 
@@ -21,7 +21,7 @@ apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.12'
-    compile 'com.android.tools.build:gradle:3.1.4'
+    compile 'com.android.tools.build:gradle:3.2.1'
     compile gradleApi()
     compile localGroovy()
 }

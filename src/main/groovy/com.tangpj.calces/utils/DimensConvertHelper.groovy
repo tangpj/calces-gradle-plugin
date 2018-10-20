@@ -31,17 +31,15 @@ class DimensConvertHelper {
     DimensConvertHelper(Project project, DimensExt dimensExt){
         this.project = project
         this.dimensExt = dimensExt
-        this.designDimensPath = "${project.getBuildFile().getParent()}/src/main/res/values/dimens.xml"
+        this.designDimensPath = "${project.getBuildFile().getParent()}" +
+                "/src/main/res/values/${dimensExt.dimensFileName}.xml"
         this.outputGroup = "${project.getBuildFile().getParent()}/src/main/res"
     }
 
     def createSwDimens(){
         File designDimens = new File(designDimensPath)
         if (!designDimens.exists()){
-            return
-        }
-        if (!designDimens.getParentFile().exists() && !designDimens.getParentFile().mkdirs()){
-            println "Unable to find dimens and create fail, please manually create"
+            throw new UnknownError("Unable to find ${designDimensPath}, please manually create")
         }
         dimensExt.smallestWidths.forEach{
             StringWriter outSw = convertSwDimens(it, dimensExt.designPx, designDimens)
@@ -82,7 +80,7 @@ class DimensConvertHelper {
 
     private void outputSwDimens(StringWriter sw, int targetSw){
         def outputGroupPath = "$outputGroup/values-sw${targetSw}dp"
-        def outputSwPath = "$outputGroup/values-sw${targetSw}dp/dimens.xml"
+        def outputSwPath = "$outputGroup/values-sw${targetSw}dp/${dimensExt.dimensFileName}.xml"
         def outputGroupFile = new File(outputGroupPath)
         if (!outputGroupFile.exists()) {
             outputGroupFile.mkdirs()
