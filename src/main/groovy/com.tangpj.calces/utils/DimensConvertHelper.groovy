@@ -54,13 +54,13 @@ class DimensConvertHelper {
             String node = it.text()
             if (node.endsWith("dp") || node.endsWith("sp")){
                 String unit = node.substring(node.length() - 2, node.length())
-                int value = node.substring(0, node.length() - 2).toInteger()
+                double value = new BigDecimal(node.substring(0, node.length() - 2).toDouble())
                 BigDecimal covert = BigDecimal.valueOf(targetSw / designPx * value)
                 def dimens
-                if (dimensExt.scale != -1){
-                    dimens = covert.setScale(0, dimensExt.scale).intValue()
+                if (dimensExt.scaleMode != -1){
+                    dimens = covert.setScale(dimensExt.scale, dimensExt.scaleMode).doubleValue()
                 }else{
-                    dimens = covert.doubleValue()
+                    dimens = covert.intValue()
                 }
 
                 String key = it.@name.text()

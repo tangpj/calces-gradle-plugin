@@ -27,7 +27,9 @@ class DimensExt {
     //设计稿尺寸
     int designPx = 375
 
-    int scale = -1
+    int scale = 2
+
+    int scaleMode = -1
 
     boolean auto = false
 
@@ -50,12 +52,39 @@ class DimensExt {
         this.scale = scale
     }
 
+    def scaleMode(int scaleMode){
+        this.scaleMode = scaleMode
+    }
+
     def auto(boolean auto){
         this.auto = auto
     }
 
     @Override
     String toString() {
-        return "auto: $auto, designPx: $designPx, scale: $scale, corvent small widths: ${smallestWidths.join(",")}"
+        return "auto: $auto, designPx: $designPx, scale: $scale, scaleMode: ${getScaleModeStr()} corvent small widths: ${smallestWidths.join(",")}"
+    }
+
+    private String getScaleModeStr(){
+        switch (scaleMode){
+            case BigDecimal.ROUND_UP:
+                return "ROUND_UP"
+            case BigDecimal.ROUND_DOWN:
+                return "ROUND_DOWN"
+            case BigDecimal.ROUND_CEILING:
+                return "ROUND_CEILING"
+            case BigDecimal.ROUND_FLOOR:
+                return "ROUND_FLOOR"
+            case BigDecimal.ROUND_HALF_UP:
+                return "ROUND_HALF_UP"
+            case BigDecimal.ROUND_HALF_DOWN:
+                return "ROUND_HALF_DOWN"
+            case BigDecimal.ROUND_HALF_EVEN:
+                return "ROUND_HALF_EVEN"
+            case BigDecimal.ROUND_UNNECESSARY:
+                return "ROUND_UNNECESSARY"
+            default:
+                return "undefined"
+        }
     }
 }
