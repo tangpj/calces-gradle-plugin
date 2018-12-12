@@ -259,7 +259,10 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 - designPx, int类型
   设计稿width的px值，默认为375。需要根据设计稿的实际width值来确定
 - scale, int类型
-  取整方式，采用的事BigDecimal的Sacle值
+  保留小数位, 需要手动设置scaleMode值才会生效
+- scaleMode, int类型
+  取整方式，和BigDecimal的Sacle值一致，这里需要注意的是，必须要设置scaleMode值，scale才会生效。
+  不设置的话，默认**不**保留小数位，会把转换后的dp四舍五入成int值。
 - auto, 布尔值
   是否自动启动转换任务，设置为false可以避免每次构建时自动检查是否转换
   如果设置为false需要手动启动任务，任务名称为dimensCovert
@@ -306,7 +309,7 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 ### Version 1.2.52
 - screen插件dimens支持浮点数格式转换
 - dimens浮点数控制配置更新
-  更改为：sacle控制保留消暑为，scaleMode控制小数保留模式
+  更改为：sacle控制保留小数位，scaleMode控制小数保留模式
 
 ## TODO
 
