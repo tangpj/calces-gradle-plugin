@@ -1,0 +1,60 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'maven'
+    id "com.gradle.plugin-publish" version "0.10.0"
+}
+
+group = 'com.tangpj.tools'
+version = '3.3.0-alpha01'
+
+archivesBaseName = 'calces-gradle-plugin'
+
+dependencies {
+
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'com.android.tools.build:gradle:3.3.0-rc02'
+    compile gradleApi()
+    compile localGroovy()
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    google()
+    jcenter()
+}
+
+pluginBundle {
+    website = 'https://github.com/DobbyTang/calces-gradle-plugin'
+    vcsUrl = 'git@github.com:DobbyTang/calces-gradle-plugin.git'
+    description = 'Android componentized automatic build script' // 你发布插件的描述
+    tags = ['Android', 'Gradle', 'Componentization'] // 你发布插件的标签
+
+    plugins {
+        appconfigPlugin {
+            id = 'calces.appconfig' // 就是刚才定义属性文件时使用的ID
+            displayName = 'AppConfigPlugin' // 添加依赖时使用的名字
+        }
+
+        modulesPlugin {
+            id = 'calces.modules' // 就是刚才定义属性文件时使用的ID
+            displayName = 'ModulesConfigPlugin' // 添加依赖时使用的名字
+        }
+
+
+    }
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('/Users/tang/.m2/repository'))
+    }
+
+}
+
+
+
+
+

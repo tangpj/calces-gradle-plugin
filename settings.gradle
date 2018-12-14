@@ -1,1 +1,4 @@
 rootProject.name = 'calces'
+include 'screen'
+include 'component'
+

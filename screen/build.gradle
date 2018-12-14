@@ -1,0 +1,53 @@
+plugins {
+    id 'groovy'
+    id 'java'
+    id 'maven'
+    id "com.gradle.plugin-publish" version "0.10.0"
+}
+
+group = 'com.tangpj.tools'
+version = '1.3.3'
+
+archivesBaseName = 'calces-gradle-plugin'
+
+dependencies {
+
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
+    compile 'com.google.guava:guava:27.0.1-jre'
+    compile gradleApi()
+    compile localGroovy()
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    google()
+    jcenter()
+}
+
+pluginBundle {
+    website = 'https://github.com/DobbyTang/calces-gradle-plugin'
+    vcsUrl = 'git@github.com:DobbyTang/calces-gradle-plugin.git'
+    description = 'Android componentized automatic build script' // 你发布插件的描述
+    tags = ['Android', 'Gradle', 'Componentization'] // 你发布插件的标签
+
+    plugins {
+        screenPlugin{
+            id = 'calces.screen'
+            displayName = "ScreenPlugin"
+        }
+    }
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri('/Users/tang/.m2/repository'))
+    }
+
+}
+
+
+
+
+
