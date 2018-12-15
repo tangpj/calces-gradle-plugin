@@ -15,9 +15,9 @@
  */
 package com.tangpj.calces.utils
 
+import com.google.common.collect.ImmutableMap
 import com.tangpj.calces.extensions.MipmapExt
 import org.gradle.api.Project
-import org.gradle.internal.impldep.com.google.common.collect.ImmutableMap
 
 import javax.imageio.ImageIO
 import java.awt.Image
