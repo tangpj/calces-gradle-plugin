@@ -9,8 +9,8 @@
 > 🍭wow Android辅助构建工具，机械性工作交给我来处理，把时间用在更有价值的工作上。
 
 <p align="center">
-
-<img alt="Version" src="https://img.shields.io/badge/version-1.2.52-brightgreen.svg"/>
+<img alt="compnent version" src="https://img.shields.io/badge/calces.screen-1.3.4--alpha02-brightgreen.svg"/>
+<img alt="screen version" src="https://img.shields.io/badge/calces.screen-3.3.0--alpha01-brightgreen.svg"/>
 <a href="https://plugins.gradle.org/plugin/calces.appconfig"><img alt="AppConfig" src="https://img.shields.io/badge/plugin-appConfig-blue.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.modules"><img alt="Modules" src="https://img.shields.io/badge/plugin-modules-yellowgreen.svg"/></a>
 <a href="https://plugins.gradle.org/plugin/calces.screen"><img alt="Modules" src="https://img.shields.io/badge/plugin-screen-%23B2EBF2.svg"/></a>
@@ -40,10 +40,13 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
 目前提供自动组件化控制与屏幕适配插件。
 
 - 组件化构建Gradle插件
-提供Gradle配置App依赖的组件、配置组件是否能单独运行、实现多个依赖不同模块的App同时构建等。
+插件包的名字叫: component，其中提供了两个组件化辅助插件，分别叫calces.appconfig和calces.modules。
+主要的功能是: 提供Gradle配置App依赖的组件、配置组件是否能单独运行、实现多个依赖不同模块的App同时构建等。
+
 
 - 屏幕适配插件
-根据设计稿与配置，自动生成smallestWidth适配文件，让你从此不需要再关注屏幕适配。
+组件包的名字叫: screen,其中提供了calces.screen插件
+主要功能是: 根据设计稿与配置，自动生成smallestWidth适配文件，让你从此不需要再关注屏幕适配。
 
 ## 教程
 - 组件化插件
@@ -79,7 +82,7 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
        ...
    }
    plugins {
-     id "calces.appconfig" version "1.2.52"
+     id "calces.appconfig" version "3.3.0-alpha01"
    }
    ```
 
@@ -94,10 +97,11 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
           }
         }
         dependencies {
-          classpath "gradle.plugin.com.tangpj.tools:calces:1.2.52"
+          classpath "gradle.plugin.com.tangpj.tools:component:3.3.0-alpha01"
         }
       }
-      apply plugin: "calces.appConfig"
+      
+      apply plugin: "calces.appconfig"
    ```
 
 
@@ -157,9 +161,8 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
        ...
    }
    plugins {
-     id "calces.screen" version "1.2.52"
+     id "calces.screen" version "1.3.4-alpha01"
    }
-   apply plugin: "calces.screen"
    ```
 
    
@@ -173,9 +176,10 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
           }
         }
         dependencies {
-          classpath "gradle.plugin.com.tangpj.tools:calces:1.2.52"
+          classpath "gradle.plugin.com.tangpj.tools:screen:1.3.4-alpha01"
         }
       }
+      
       apply plugin: "calces.screen"
    ```
 
@@ -310,6 +314,16 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 - screen插件dimens支持浮点数格式转换
 - dimens浮点数控制配置更新
   更改为：sacle控制保留小数位，scaleMode控制小数保留模式
+  
+### 插件分离，由原来的calces插件包分离成calces.component包和calces.screen插件包
+主要目的是为了解耦，把组件化插件和屏幕适配插件分离。
+
+### calces.component version 3.3.0-alpha01
+组件化插件会依赖Android Build Plugin，所以从3.3.0版本开始，版本好会与Android Build Plugin保持一致，而alpha01则是calces.component自身的版本变化。
+
+### calces.screen version 1.3.4-alpha02
+与1.2.52功能一样，唯一的区别是能单独依赖calces.screen包，不需要再依赖整个calces插件包
+ 
 
 ## TODO
 
