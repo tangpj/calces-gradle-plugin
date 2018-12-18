@@ -14,6 +14,7 @@ dependencies {
 
     compile 'org.codehaus.groovy:groovy-all:2.4.12'
     compile 'com.google.guava:guava:27.0.1-jre'
+    compile 'com.sun.activation:javax.activation:1.2.0'
     compile gradleApi()
     compile localGroovy()
 }
@@ -26,8 +27,8 @@ repositories {
 }
 
 pluginBundle {
-    website = 'https://github.com/DobbyTang/calces-gradle-plugin'
-    vcsUrl = 'git@github.com:DobbyTang/calces-gradle-plugin.git'
+    website = 'https://github.com/Tangpj/calces-gradle-plugin'
+    vcsUrl = 'https://github.com/Tangpj/calces-gradle-plugin'
     description = 'Android componentized automatic build script' // 你发布插件的描述
     tags = ['Android', 'Gradle', 'Componentization'] // 你发布插件的标签
 
