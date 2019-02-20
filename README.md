@@ -228,7 +228,7 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 **App（apps里面的配置项）**
 
 - name, String类型
-  app的名字，需要和项目路径对应，如果不填写默认为该配置的名字（如配置名为app的话，name则为:name）。倒入规则和setting.gradle中的include规则保持一致
+  app的名字，需要和项目路径对应，如果不填写默认为该配置的名字（如配置名为app的话，name则为:name）。导入规则和setting.gradle中的include规则保持一致
 - modules, String列表
   需要依赖的组件列表，通过修改该属性实现依赖不同的组件
 - dependMethod, String类型

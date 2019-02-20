@@ -3,6 +3,7 @@ plugins {
     id 'java'
     id 'maven'
     id "com.gradle.plugin-publish" version "0.10.0"
+    id 'java-gradle-plugin'
 }
 
 group = 'com.tangpj.tools'
@@ -31,10 +32,20 @@ pluginBundle {
     description = 'Android componentized automatic build script' // 你发布插件的描述
     tags = ['Android', 'Gradle', 'Componentization'] // 你发布插件的标签
 
+
+    plugins {
+        screenPlugin{
+            displayName = 'ScreenPlugin'
+        }
+    }
+}
+
+gradlePlugin{
+
     plugins {
         screenPlugin{
             id = 'calces.screen'
-            displayName = "ScreenPlugin"
+            implementationClass = "com.tangpj.calces.ScreenPlugin"
         }
     }
 }
