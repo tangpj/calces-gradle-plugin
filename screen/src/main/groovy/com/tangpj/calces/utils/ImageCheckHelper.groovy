@@ -17,6 +17,7 @@ package com.tangpj.calces.utils
 
 import javax.activation.MimetypesFileTypeMap
 
+
 class ImageCheckHelper {
 
     private  MimetypesFileTypeMap mtFtp
