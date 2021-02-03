@@ -51,11 +51,11 @@ Android构建工具包，这个工具的主旨是使用脚本自动处理机械�
 ## 教程
 - 组件化插件
 
-[Gradle自动实现Android组件化模块构建](https://tangpj.com/2018/07/22/calces-componentization/)
+[Gradle自动实现Android组件化模块构建](https://tangpj.dev/2018/07/22/calces-componentization/)
 
 - 屏幕适配插件
 
-[给你一个全自动的屏幕适配方案（基于SW方案）！—— 解放你和UI的双手](https://tangpj.com/2018/09/29/calces-screen/)
+[给你一个全自动的屏幕适配方案（基于SW方案）！—— 解放你和UI的双手](https://tangpj.dev/2018/09/29/calces-screen/)
 
 ## 功能介绍
 
@@ -323,7 +323,7 @@ auto 是用来确认是否需要自动生成sw文件的，会影响编译时间�
 
 ### calces.screen version 1.3.4-alpha02
 与1.2.52功能一样，唯一的区别是能单独依赖calces.screen包，不需要再依赖整个calces插件包
- 
+
 
 ## TODO
 
